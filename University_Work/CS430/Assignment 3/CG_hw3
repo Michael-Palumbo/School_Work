@@ -1,0 +1,510 @@
+#!/usr/bin/env python3
+
+import sys
+from math import sin, cos, radians
+
+# Define some global variables
+world_x1 = 0
+world_x2 = 500
+world_y1 = 0
+world_y2 = 500
+
+view_x1 = 0
+view_x2 = 500
+view_y1 = 0
+view_y2 = 500
+
+width = 0
+height = 0
+
+fileName = ""
+
+scaleFactor = 1.0
+rotation = 0.0
+translateX, translateY = 0, 0
+
+# Simple Point Object
+class Vertex():
+	def __init__(self,x,y):
+		self.x = x
+		self.y = y
+
+	def __str__(self):
+		return str(self.x) + " " + str(self.y)
+
+class Polygon():
+	def __init__(self, vertices):
+		self.vertices = vertices
+
+	def get(self, n):
+		return self.vertices[n]
+
+	def append(self, v):
+		self.vertices.append(v)
+
+	def getYMin(self):
+		Y_min = self.vertices[0].y
+		for v in self.vertices:
+			if v.y < Y_min:
+				Y_min = v.y
+		return Y_min
+
+	# def __str__(self):
+	# 	return str(self.vertices)
+
+polygons = [] #Contains a list of vertexs
+def processArgs():
+	global fileName, scaleFactor, translateX, translateY, rotation, world_y1,world_x1,world_y2, world_x2, view_x1, view_y1, view_x2, view_y2
+
+	argv = sys.argv
+	for i in range(1,len(argv),2):
+		if argv[i][0] == '-':
+			letter = argv[i][1]
+			if letter == "f":
+				fileName = argv[i+1]
+			elif letter == 's':
+				scaleFactor = float(argv[i+1])
+			elif letter == 'm':
+				translateX = int(argv[i+1])
+			elif letter == 'n':
+				translateY = int(argv[i+1])
+			elif letter == 'r':
+				rotation = radians(int(argv[i+1]))
+			elif letter == 'a':
+				world_x1 = int(argv[i+1])
+			elif letter == 'b':
+				world_y1 = int(argv[i+1])
+			elif letter == 'c':
+				world_x2 = int(argv[i+1])
+			elif letter == 'd':
+				world_y2 = int(argv[i+1])
+			elif letter == 'j':
+				view_x1 = int(argv[i+1])
+			elif letter == 'k':
+				view_y1 = int(argv[i+1])
+			elif letter == 'o':
+				view_x2 = int(argv[i+1])
+			elif letter == 'p':
+				view_y2 = int(argv[i+1])
+
+#/////////////////////////////////////
+#//READING THE FILE
+#/////////////////////////////////////
+
+def readPS():
+	line = ""
+	f = open(fileName,"r")
+
+	#Ignore all text until %%%BEGIN is reached
+	line = f.readline()
+	while line.strip() != "%%%BEGIN":
+		line = f.readline()
+
+	#Read till %%%END is reached
+	line = f.readline()
+
+	# polygon = None
+	i = 0
+	newPoly = True
+	while line.strip() != "%%%END":
+		if line.strip() == "stroke":
+			i += 1
+			newPoly = True
+
+		elif not line.isspace():
+			if newPoly:
+				newPoly = False
+				polygons.append(Polygon([]))
+
+			x, y, *rest = line.strip().split()
+			v = Vertex(int(x),int(y))
+			polygons[i].append(v)
+
+		line = f.readline()
+
+	f.close()
+
+# ////////////////////////////////////////
+# //DEBUGGING TOOL FOR THE ARRAY LIST
+# ///////////////////////////////////////
+
+def printArray(array):
+	print( "ARRAY CHECKER [] ", file=sys.stderr)
+	for polygon in array:
+		for vertex in polygon.vertices:	
+			print("%d %d"%( vertex.x, vertex.y), file=sys.stderr)
+		print("BREAK---------", file=sys.stderr)
+
+
+# ///////////////////////////////////////
+# // THE CLIPPING SECTION
+# //////////////////////////////////////
+
+TOP = 0
+BOTTOM = 1
+LEFT = 2
+RIGHT = 3
+
+def clipping():
+
+		#Sutherland-Hodgman clipping
+
+		# Look at each case individually, cut off any line that goes further than the point, 
+		# add new vertex in the intersept of the line to the boundary
+
+		clipper(TOP)
+
+		clipper(RIGHT)
+
+		clipper(BOTTOM)
+
+		clipper(LEFT)
+
+		for polygon in polygons:
+			if polygon.vertices[0].x != polygon.vertices[len(polygon.vertices)-1].x or polygon.vertices[0].y != polygon.vertices[len(polygon.vertices)-1].y:
+				polygon.vertices.append(polygon.vertices[0])
+
+
+def clipper(clip_boundary):
+
+	global polygons
+
+	# Array that contains a list of the new vertices for a polygon
+	for index in range(len(polygons)):
+		polygon = polygons[index].vertices
+
+		tempArray = []
+
+		for i in range(len(polygon)-1):
+			v1 = polygon[i]
+			v2 = polygon[i+1]
+
+			if inside(clip_boundary, v1):
+				if i == 0:
+					tempArray.append(v1)
+
+				if(inside(clip_boundary, v2)):
+					tempArray.append(v2)
+
+				else:
+					v = intersection(v1, v2, clip_boundary)
+					tempArray.append(v)
+
+			else:
+				if inside(clip_boundary, v2):
+					v = intersection(v2, v1, clip_boundary)
+					tempArray.append(v)
+					tempArray.append(v2)
+
+		polygons[index] = Polygon(tempArray)
+		# polygon = tempArray
+
+	polygons = list(filter(lambda s: len(s.vertices) != 0, polygons))
+
+def inside(clip_boundary, v):
+
+		# Really disgusting way for each case, but I couldn't think of a better way
+
+		if (clip_boundary == TOP and v.y < world_y2):
+			return True
+
+		elif(clip_boundary == LEFT and v.x > world_x1):
+			return True
+
+		elif(clip_boundary == BOTTOM and v.y > world_y1):
+			return True
+
+		elif(clip_boundary == RIGHT and v.x < world_x2):
+			return True
+
+		return False
+
+
+def intersection(v1, v2, clip_boundary):
+	dx = v2.x - v1.x
+	dy = v2.y - v1.y
+
+	v = Vertex(0,0)
+
+	# //Vertical line condition
+	if(dx == 0 or dy == 0):
+		if(clip_boundary == TOP):
+			v.x = v1.x;
+			v.y = world_y2;
+		elif (clip_boundary == LEFT):
+			v.x = world_x1
+			v.y = v1.y
+		elif (clip_boundary == BOTTOM):
+			v.x = v1.x
+			v.y = world_y1
+		elif (clip_boundary == RIGHT):
+			v.x = world_x2
+			v.y = v1.y
+		return v
+	
+	#Can't divide by 0, get slope, and find interection for each case
+	slope = dy/dx;
+
+	if(clip_boundary == LEFT):
+		v.x = world_x1
+		v.y = (int) (slope * (world_x1 - v1.x) + v1.y)
+		print("LEFT: x,y", v.x , v.y, file=sys.stderr)
+	
+	if(clip_boundary == RIGHT):
+		v.x = world_x2
+		v.y = (int) (slope * (world_x2 - v1.x) + v1.y)
+		print("RIGHT: x,y", v.x , v.y, file=sys.stderr)
+
+	if(clip_boundary == TOP):
+		v.x = (int) ((world_y2 - v1.y)/slope + v1.x)
+		v.y = world_y2
+		print("TOP: x,y, world_y2, y1, slope, x1", v.x , v.y, world_y2, v1.y, slope, v1.x , file=sys.stderr)
+	
+	if(clip_boundary == BOTTOM):
+		v.x = (int) ((world_y1 - v1.y)/slope + v2.x)
+		v.y = world_y1
+		print("BOTTOM: x,y", v.x , v.y, file=sys.stderr)
+
+	print("RETURN: x,y", v.x , v.y, file=sys.stderr)
+	return v
+
+# //////////////////////////////////////
+# // THE DRAWING SECTION
+# //////////////////////////////////////
+
+def draw(pixels):
+	# //Make everything white
+	for i in range(height):
+		for j in range(width):
+			pixels[i][j] = '0'
+	
+	for polygon_obj in polygons:
+		polygon = polygon_obj.vertices
+		for i in range(len(polygon) - 1 ):
+
+			x1 = polygon[i].x #- world_x1
+			y1 = polygon[i].y #- world_y1
+			x2 = polygon[i+1].x #- world_x1
+			y2 = polygon[i+1].y #- world_y1
+
+			steep = (abs(y2 - y1) > abs(x2 - x1));
+
+			# //Slope greater than 1
+			if(steep):
+				(y1, x1) = (x1,y1)
+				(y2, x2) = (x2,y2)
+
+			# // Line heads left, swap points
+			if(x1 > x2):
+				(x1, x2) = (x2, x1)
+				(y1, y2) = (y2, y1)
+
+			dErr = abs(y2 - y1)
+			yStep = -1 if y1 > y2 else 1
+			dX = x2 - x1
+
+			err = dX / 2
+
+			y = y1
+
+			for x in range(x1,x2+1):
+				if x > len(pixels):
+					print(x, file=sys.stderr)
+					sys.exit()
+				if steep:
+					pixels[int(x)][int(y)] = '1' #drawPoint(y,x);
+				else:
+					pixels[int(y)][int(x)] = '1' #drawPoint(x,y);
+
+				err -= dErr
+				if(err < 0):
+					y += yStep
+					err += dX
+
+def printPixels(pixels):
+	print("P1");
+	print("# test.pbm");
+	print(width, height);
+
+	for i in range(height-1, -1, -1):
+		for j in range(width):
+			print(pixels[i][j], end = " ")
+		print()
+
+# ////////////////////////////
+# // TRANSFORMATIONS
+# ////////////////////////////
+
+def scalePolygon():
+	for polygon in polygons:
+		for v in polygon.vertices:
+			v.x = int( v.x * scaleFactor)
+			v.y = int( v.y * scaleFactor)
+
+def rotatePolygon():
+	for polygon in polygons:
+		for v in polygon.vertices:
+			temp_x = int( (v.x * cos(rotation) - (v.y * sin(rotation))) )
+			temp_y = int( (v.x * sin(rotation) + (v.y * cos(rotation))) )
+			v.x = temp_x;
+			v.y = temp_y;
+
+def translatePolygon():
+	for polygon in polygons:
+		for v in polygon.vertices:
+			v.x += translateX;
+			v.y += translateY;
+
+#////////////////////////
+#//POLYGON FILLING
+#////////////////////////
+
+# Helper functions to get the max and min y value in a polygon
+def getMaxY(polygon):
+	maxY = polygon.vertices[0].y
+	for vertice in polygon.vertices:
+		if vertice.y > maxY:
+			maxY = vertice.y
+	return maxY
+
+def getMinY(polygon):
+	minY = polygon.vertices[0].y
+	for vertice in polygon.vertices:
+		if vertice.y < minY:
+			minY = vertice.y
+	return minY
+
+# We already have our lines that need to be filled, no just go from one x to the other knowing the y
+def scan_fill(scan_vertices, pixels):
+	for line in scan_vertices:
+		for i in range(0,len(line),2):
+			if len(line) % 2 == 1:
+				break
+			x1 = line[i].x #- world_x1
+			y1 = line[i].y #- world_y1
+			x2 = line[i+1].x #- world_x1
+
+			while x1 != x2:
+				pixels[y1][x1] = '1'
+				x1 += 1
+
+def sorting(scan_vertices):
+	for i in range(len(scan_vertices)):
+		scan_vertices[i].sort(key=lambda v: v.x)
+
+def calculate_intersection(x1, y1, x2, y2, y, ymin):
+
+		dx = x2 - x1;
+		dy = y2 - y1;
+
+		x = round(x1 + (dx/dy)*(y - y1));
+
+		return Vertex(x,y)
+def polygon_filling(pixels):
+
+	for polygon in polygons:
+		if len(polygon.vertices) == 0:
+			continue
+
+		edge_list = []
+		ymax = getMaxY(polygon)
+		ymin = getMinY(polygon)
+		
+		for i in range(ymin, ymax+1):
+			edge_list.append([])
+
+		for i in range(len(polygon.vertices)-1):
+			ymin_edge = polygon.vertices[i].y
+			ymax_edge = polygon.vertices[i+1].y
+
+			for y in range(ymin, ymax+1):
+				if ((y >= ymin_edge and y < ymax_edge ) or (y >= ymax_edge and y < ymin_edge)) and ymin_edge != ymax_edge:
+					x1 = polygon.vertices[i].x
+					x2 = polygon.vertices[i+1].x
+
+					edge_list[y-ymin].append([x1,ymin_edge,x2,ymax_edge])
+
+		for y in range(ymin, ymax+1):
+
+			scan_vertices = []
+
+			for i in range(ymin, ymax+1):
+				scan_vertices.append([])
+
+			for j in range(len(edge_list[y-ymin])):
+				x1, y1, x2, y2 = edge_list[y-ymin][j]
+				scan_vertices[y-ymin].append(calculate_intersection(x1,y1,x2,y2, y, ymin))
+
+			sorting(scan_vertices)
+			scan_fill(scan_vertices, pixels)
+
+def round_int():
+
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x = round(vertice.x)
+			vertice.y = round(vertice.y)
+
+def viewport_transformation():
+	#//Translation to origin of world window
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x -= world_x1
+			vertice.y -= world_y1
+
+	#//Scaling to viewport
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x *=  (view_x2-view_x1) / (world_x2-world_x1)
+			vertice.y *= ( view_y2-view_y1) / (world_y2-world_y1)
+
+	#//Translating to viewport origin
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x += view_x1
+			vertice.y += view_y1
+
+
+#////////////////////////
+#//MAIN
+#////////////////////////
+if __name__ == "__main__":
+
+	fileName = "hw3.ps"
+
+	processArgs()
+
+	# width = world_x2 - world_x1 + 1
+	# height = world_y2 - world_y1 + 1
+
+	width = 501
+	height = 501
+
+	print("height", height, "width", width, file=sys.stderr)
+
+	pixels = []
+	for i in range(height):
+		col = []
+		for i in range(width):
+			col.append("0")
+		pixels.append(col)
+
+	readPS()
+
+	scalePolygon()
+	rotatePolygon()
+	translatePolygon()
+
+	clipping()
+
+	viewport_transformation()
+
+	round_int()
+
+	draw(pixels)
+
+	polygon_filling(pixels)
+
+	printPixels(pixels)
+	
+	printArray(polygons)

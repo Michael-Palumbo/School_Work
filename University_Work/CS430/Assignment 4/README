@@ -1,0 +1,13 @@
+Michael Palumbo
+CG_hw4
+
+Program coded on windows 10 through a bash terminal. I used python when developing this program. The CG_hw4 contains the main file (and everything else). To run it, you can use ./CG_hw4. If that doesn't work, python3 CG_hw4 is the safe alternative. I did not import any special libraries so I assume it'll run on tux fine.
+
+The program doesn't work fully as intented.
+
+Problems:
+The program does not produce right output when given input already normalized between -1 and 1. One example is the sphere problem. 
+
+After hours of searching I found that my code also generates an opposite value for the x and y. I compensated by adding a negative Scale for Perspective Matrix, since that's where I believe its being flipped. Though, through extensive back and forth checking, I have to rational clue to why it is truly producing an opposite sign value.
+
+P.S If you know the issue to the problems, I don't expect you to look for it ofcourse, but if you happen to stumble on it. I would love to know about it. 

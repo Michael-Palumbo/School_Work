@@ -1,0 +1,9 @@
+Here is some test input.
+We will use this to test whether the program works.
+Of course, all lines must be printed.
+For example this is the fourth line.
+If results don't match, then we should worry.
+Anyhow, this is the second to last line.
+Sorry, to see you go, Bye!
+
+JK, this is the last line

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+
+<script>
+
+function gpa(){
+  //If total weight and hours is created inside loop,
+  //they won't exist outside of it.
+	var totalWeighted = 0, totalHours = 0;
+
+    for(var i = 1 ; i < 9 ; i++){ //Loop through expected amount of rows
+			let grade = document.getElementById("grade" + i);//get id named grade(i)
+			let hour = document.getElementById("hour" + i);//get id named hour(i)
+      if(grade.value == "" || hour.value == "") //if either box is empty
+        continue; //Skip this iteration
+
+      totalWeighted += grade.value * hour.value; //sumation of hours * grade
+      totalHours += +hour.value; //sumation of hours
+    }
+    var gpa = totalWeighted / totalHours;
+    document.getElementById("gpaOut").innerHTML = "Your GPA is: " + gpa;//add gpa to the existing h1 tag
+
+}
+
+</script>
+</head>
+<body>
+
+	<table><tr><td width="170px">Grade</td><td>Hours</td></tr></table>
+
+	<textarea id="grade1"></textarea><textarea id="hour1"></textarea><br>
+	<textarea id="grade2"></textarea><textarea id="hour2"></textarea><br>
+	<textarea id="grade3"></textarea><textarea id="hour3"></textarea><br>
+	<textarea id="grade4"></textarea><textarea id="hour4"></textarea><br>
+	<textarea id="grade5"></textarea><textarea id="hour5"></textarea><br>
+	<textarea id="grade6"></textarea><textarea id="hour6"></textarea><br>
+	<textarea id="grade7"></textarea><textarea id="hour7"></textarea><br>
+	<textarea id="grade8"></textarea><textarea id="hour8"></textarea><br>
+
+	<h1 id="gpaOut">Your GPA is: </h1>
+	<button onclick="gpa()">Click to call</button>
+
+</body>
+</html>

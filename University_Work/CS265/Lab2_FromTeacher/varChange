@@ -1,0 +1,23 @@
+#
+# setVars - *Not* a script
+#
+# Kurt Schmidt
+#	1/04
+# 
+# Platform: Linux 2.6.18.6 
+# 
+# EDITOR: tabstop=2, cols=80
+# 
+# NOTES:  This file, like .bashrc, can be sourced by the shell, to make
+#   changes to the current environment
+#
+#  $ source setVars
+#  $ . setVars
+#
+
+echo "\$blah is: $blah"
+
+blah="Somewhere over the rainbow"
+
+echo "\$blah is now: $blah"
+

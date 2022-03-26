@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Document</title>
+  <script>
+    var mood = 1;
+    function cycle(){
+      switch(mood){
+        case 1:
+          document.getElementById("images").src = "HappyCow.png";
+          mood++;
+          break;
+        case 2:
+          document.getElementById("images").src = "EatingCow.jpg";
+          mood++;
+          break;
+        case 3:
+          document.getElementById("images").src = "SleepingCow.jpg";
+          mood=1;
+          break;
+      }
+
+    }
+    var pet;
+    var milk;
+    var feed;
+
+    startGame();
+
+    function startGame(){
+      pet = setTimeout(() => console.log("Game Started"), 3000);
+    }
+  </script>
+  <style>
+    button{
+      margin-bottom:20px;
+      width:120px;
+    }
+  </style>
+</head>
+<body>
+
+  <table><tr>
+    <td>
+      <img width="700px" height="600px" src="SleepingCow.jpg" id="images"><br>
+    </td>
+    <td>
+      <button onclick="cycle()" >Cycle Pictures</button><br>
+      <button onclick="cycle()" >Feed</button><br>
+      <button onclick="cycle()" >Pet</button><br>
+    </td>
+  </tr></table>
+
+</body>
+</html>

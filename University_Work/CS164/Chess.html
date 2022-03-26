@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script>
+
+  function move(){
+    var str = document.getElementById('moveQ').value;
+    document.getElementById('moveQ').value = "";
+    var spot1 = str.substring(0,2);
+    var spot2 = str.substring(2,4);
+    var text = document.getElementById(spot1).innerHTML;
+    document.getElementById(spot1).innerHTML = "";
+    document.getElementById(spot2).innerHTML = text;;
+  }
+
+</script>
+
+<style>
+  td{
+   height:80px;
+   width:80px;
+   font-size:60px;
+   text-align: center;
+   }
+
+   .black {
+   background-color:#CC00CC;
+   }
+
+   .white {
+   background-color:#FFFFFF;
+   }
+
+</style>
+
+</head>
+<body>
+
+<table border="1">
+
+<tr>
+ <td class="white" id="a8">&#9820;</td><td class="black" id="b8">&#9822;</td>
+ <td class="white" id="c8">&#9821;</td><td class="black" id="d8">&#9819;</td>
+ <td class="white" id="e8">&#9818;</td><td class="black" id="f8">&#9821;</td>
+ <td class="white" id="g8">&#9822;</td><td class="black" id="h8">&#9820;</td>
+</tr>
+<tr>
+ <td class="black" id="a7">&#9823;</td><td class="white" id="b7">&#9823;</td>
+ <td class="black" id="c7">&#9823;</td><td class="white" id="d7">&#9823;</td>
+ <td class="black" id="e7">&#9823;</td><td class="white" id="f7">&#9823;</td>
+ <td class="black" id="g7">&#9823;</td><td class="white" id="h7">&#9823;</td>
+</tr>
+<tr>
+ <td class="white" id="a6"></td><td class="black" id="b6"></td>
+ <td class="white" id="c6"></td><td class="black" id="d6"></td>
+ <td class="white" id="e6"></td><td class="black" id="f6"></td>
+ <td class="white" id="g6"></td><td class="black" id="h6"></td>
+</tr>
+<tr>
+ <td class="black" id="a5"></td><td class="white" id="b5"></td>
+ <td class="black" id="c5"></td><td class="white" id="d5"></td>
+ <td class="black" id="e5"></td><td class="white" id="f5"></td>
+ <td class="black" id="g5"></td><td class="white" id="h5"></td>
+</tr>
+<tr>
+ <td class="white" id="a4"></td><td class="black" id="b4"></td>
+ <td class="white" id="c4"></td><td class="black" id="d4"></td>
+ <td class="white" id="e4"></td><td class="black" id="f4"></td>
+ <td class="white" id="g4"></td><td class="black" id="h4"></td>
+</tr>
+<tr>
+ <td class="black" id="a3"></td><td class="white" id="b3"></td>
+ <td class="black" id="c3"></td><td class="white" id="d3"></td>
+ <td class="black" id="e3"></td><td class="white" id="f3"></td>
+ <td class="black" id="g3"></td><td class="white" id="h3"></td>
+</tr>
+<tr>
+ <td class="white" id="a2">&#9817;</td><td class="black" id="b2">&#9817;</td>
+ <td class="white" id="c2">&#9817;</td><td class="black" id="d2">&#9817;</td>
+ <td class="white" id="e2">&#9817;</td><td class="black" id="f2">&#9817;</td>
+ <td class="white" id="g2">&#9817;</td><td class="black" id="h2">&#9817;</td>
+</tr>
+<tr>
+ <td class="black" id="a1">&#9814;</td><td class="white" id="b1">&#9817;</td>
+ <td class="black" id="c1">&#9815;</td><td class="white" id="d1">&#9813;</td>
+ <td class="black" id="e1">&#9812;</td><td class="white" id="f1">&#9815;</td>
+ <td class="black" id="g1">&#9816;</td><td class="white" id="h1">&#9814;</td>
+</tr>
+
+</table>
+
+<input type="text" id="moveQ"></input>
+<button onclick="move()">Click Me </button>
+
+</body>
+</html>

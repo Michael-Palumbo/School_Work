@@ -1,0 +1,46 @@
+time ./sort1 < ins.1000 > /dev/nul
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.10000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.20000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.30000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.40000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.50000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.60000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.70000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+time ./sort1 < ins.80000 > /dev/null
+echo =====================================
+gprof -b sort1 gmon.out | awk '{print $4}' | head -8
+echo =====================================
+
+

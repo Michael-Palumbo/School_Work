@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script>
+
+    const DEAD = 0, ALIVE = 1;
+    const gridSize = 50, SIZE = 650, cellSize = ~~(SIZE/gridSize);
+
+    var g; //g for graphics
+
+    var grid;
+
+    //Initializing the Canvas...
+    function IntGame(){
+      var canvasRef = document.getElementById('game');
+      g = canvasRef.getContext('2d');
+
+      canvasRef.width = SIZE;
+      canvasRef.height = SIZE;
+
+      grid = new Array(gridSize);
+      for(var i = 0 ; i < gridSize ; i++)
+        grid[i] = new Array(gridSize);
+
+      setupBoard();
+
+      canvasRef.addEventListener("click", mouseClick, false);
+    }
+
+    //Setting Up the Board Section...
+    function setupBoard(){
+      document.getElementById("GenCount").innerText = "Generation: "+ (genCount=0);//I know, 2 things at once is bad
+
+      pauseGame();
+
+      for(var i = 0 ; i < gridSize ; i++)
+        for(var ii = 0 ; ii < gridSize ; ii++){
+          grid[i][ii] =  DEAD;//~~(Math.random()*2);//dead 0, alive 1
+        }
+
+      drawGame();
+    }
+
+    //Loading Preset Board Section...
+    const GLIDERGUN = [[2,6],[2,7],[3,7],[3,6],[12,6],[12,7],[12,8],
+    [13,5],[14,4],[15,4],[13,9],[14,10],[15,10],[16,7],[17,5],[18,6],
+    [18,7],[18,8],[19,7],[17,9],[22,6],[23,6],[23,5],[22,5],[22,4],[23,4],
+    [24,3],[26,3],[26,2],[24,7],[26,7],[26,8],[36,4],[36,5],[37,4],[37,5]];
+
+    const LINE = [[0,24],[1,24],[2,24],[3,24],[4,24],[5,24],[6,24],[7,24],//I could have made a special function for this but nah
+    [8,24],[9,24],[10,24],[11,24],[12,24],[13,24],[14,24],[15,24],[16,24],
+    [17,24],[18,24],[19,24],[20,24],[21,24],[22,24],[23,24],[24,24],[26,24],
+    [25,24],[27,24],[28,24],[29,24],[30,24],[31,24],[32,24],[33,24],[34,24],
+    [35,24],[36,24],[37,24],[38,24],[39,24],[40,24],[41,24],[42,24],[43,24],
+    [44,24],[45,24],[46,24],[47,24],[48,24],[49,24]];
+
+    // const IGNORE = [[23,11],[22,12],[22,13],[24,12],[24,13],[23,14],[23,15],
+    // [23,16],[23,17],[22,18],[22,19],[23,20],[24,19],[24,18]];
+
+    function loadBoard(){
+      setupBoard();
+
+      let sel = document.getElementById('loadOut');
+
+      switch(sel.selectedIndex){
+        case 0:
+        loadRandom();
+        break;
+        case 1:
+        setupPreLoadBoard(GLIDERGUN);
+        break;
+        case 2:
+        setupPreLoadBoard(LINE);
+        break;
+      }
+
+      drawGame();
+    }
+
+    function loadRandom(){
+      for(var i = 0 ; i < gridSize ; i++)
+        for(var ii = 0 ; ii < gridSize ; ii++)
+          grid[i][ii] =  ~~(Math.random()*2);//dead 0, alive 1
+    }
+
+    function setupPreLoadBoard(REF){
+      for (var point of REF){
+        grid[point[0]][point[1]] = ALIVE;
+      }
+    }
+
+    //The Looping Section...
+    var timer, genCount=0;
+
+    function startGame(){
+      if(timer != null)
+        stopTimer();
+      timer = setInterval(runGame, 100); //start loop
+      document.getElementById('ToggleRunning').innerHTML = "Running...";
+
+    }
+
+    function startSlowGame(){
+      if(timer != null)
+        stopTimer();
+      timer = setInterval(runGame, 1000); //start slow loop
+      document.getElementById('ToggleRunning').innerHTML = "Running Slowly...";
+
+    }
+
+    function pauseGame(){
+      if(timer !=null){
+        stopTimer();
+        document.getElementById('ToggleRunning').innerHTML = "Paused...";
+      }
+
+    }
+
+    function stopTimer(){
+      clearInterval(timer);
+      timer = null;
+    }
+
+    function stepGame(){
+      runGame(); //I could have just called runGame(), I know
+    }
+
+    //Drawing and Redrawing Section...
+    function drawGame(){
+      for(var i = 0 ; i < gridSize ; i++)
+        for(var ii = 0 ; ii < gridSize ; ii++){
+          if(grid[i][ii] == DEAD)
+            g.fillStyle = "rgb(139,172,15)";
+          else
+            g.fillStyle = "rgb(15,56,15)";
+          g.fillRect(i*cellSize,ii*cellSize,cellSize,cellSize);
+        }
+      // for(var i = 0 ; i < gridSize ; i++)
+      //   for(var ii = 0 ; ii < gridSize ; ii++){
+      //     if(grid[i][ii] == DEAD){
+      //       g.fillStyle = "black";
+      //       g.fillRect(i*cellSize,ii*cellSize,cellSize-2,cellSize-2);
+      //     }else {
+      //       g.fillStyle = "white";
+      //       g.fillRect(i*cellSize,ii*cellSize,cellSize,cellSize);
+      //     }
+      //   }
+      }
+
+      //The Section that Makes it actually work
+      function runGame(){
+        document.getElementById("GenCount").innerText = "Generation: "+ ++genCount;//I know, 2 things at once is bad
+
+        let gridTemp = new Array(gridSize);
+        for(var i = 0 ; i < gridSize ; i++)
+          gridTemp[i] = new Array(gridSize);
+
+        for(var i = 0 ; i < gridSize ; i++)
+          for(var ii = 0 ; ii < gridSize ; ii++){
+            let num = getNeighbor(i,ii);
+
+            switch(num){
+              case 2 :
+                gridTemp[i][ii] = grid[i][ii];
+                break;
+              case 3 :
+                gridTemp[i][ii]= ALIVE;
+                break;
+              default:
+                gridTemp[i][ii]= DEAD;
+            }
+
+          }
+        grid = gridTemp;
+        drawGame();
+      }
+
+    const NEIGHBOR = [ //The 8 Offsets from the Origin
+      [-1,-1],[0,-1],[1,-1],
+      [-1,0],        [1,0],
+      [-1,1],[0,1],[1,1]
+    ];
+
+      function getNeighbor(i,ii){
+        var num = 0;
+        for(var point of NEIGHBOR){
+
+          if( (inbounds(i,point[0]) && inbounds(ii,point[1]))
+             && grid[i + point[0]][ii+ point[1]] == ALIVE)
+
+            num++;
+        }
+        return num;
+      }
+
+      function inbounds(i , offset){//Makes sure we won't get index outOfBounds
+        return i+offset >= 0 && i+offset < gridSize;
+      }
+
+      //The Simple MouseClick Section...
+      function mouseClick(e){
+        grid[~~(e.offsetX/cellSize)][~~(e.offsetY/cellSize)] =
+          grid[~~(e.offsetX/cellSize)][~~(e.offsetY/cellSize)] == ALIVE ? DEAD : ALIVE;
+        //document.getElementById("display").innerHTML += "[" + ~~(e.offsetX/cellSize) + "," + ~~(e.offsetY/cellSize) + "],";
+        drawGame();
+      }
+
+  </script>
+
+  <style>
+  button{
+    background-color: rgb(139,172,15);
+    color:rgb(15,56,15);
+  }
+  b{
+    color:rgb(15,56,15);
+  }
+  select{
+    background-color: rgb(202,220,159);
+    color:rgb(15,56,15);
+  }
+  </style>
+
+  <title>Conway's Game of Life</title>
+
+</head>
+
+<body onload="IntGame()" style="background-color:rgb(202,220,159)">
+  <center>
+  <h1 style="margin:0px">Conway's Game of Life</h1>
+  <p style="margin:5px"><b id="ToggleRunning">Paused...</b></p>
+  <button onclick="stepGame()"      >Step</button>
+  <button onclick="startSlowGame()" >Slow</button>
+  <button onclick="startGame()"     >Run</button>
+  <button onclick="pauseGame()"     >Pause</button>
+  <button onclick="setupBoard()"    >Clear Board</button>
+
+  <select id="loadOut">
+    <option >Random</option>
+    <option >Gospel Gun Board</option>
+    <option >Stright Line</option>
+  </select>
+  <button onclick="loadBoard()">Load Board</button>
+
+  <b id="GenCount" style="padding-left:4px"></b>
+
+  <br><br>
+    <!-- <p id="display">Points: </p> -->
+  <canvas id="game"></canvas>
+
+
+  </center>
+</body>
+
+</html>

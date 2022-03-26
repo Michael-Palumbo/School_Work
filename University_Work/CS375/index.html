@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			body{
+				background-color:lightblue;
+			}
+			.tableSub{
+				padding: 10px;
+				background:cyan;
+				border: black solid 1px;
+				margin:4px;
+			}
+		</style>
+			</head>
+	<body>	
+		<h1>Welcome to the Weather App</h1>
+		<h3>Click Fetch to grab weather</h3>
+			<button id="getIt">Fetch</button>
+			<br>
+			<p id="fetchMessage"></p>
+			<br>
+			<div id="Days"> </div>
+
+		<script>
+
+			function error(info){	
+				document.getElementById("fetchMessage").innerHTML = info;
+			}
+
+			var lat = 0
+			var lon = 0
+
+			function showPosition(pos){
+				let s = `Fetching forecast for lat, ${pos.coords.latitude}, lon ${pos.coords.longitude}`;
+				document.getElementById("fetchMessage").innerHTML = s;
+				document.getElementById("lat").value = pos.coords.latitude;
+				document.getElementById("long").value = pos.coords.longitude;
+				lat = parseInt(pos.coords.latitude,10);
+				lon = parseInt(pos.coords.longitude,10);
+			}
+
+			var button = document.getElementById("getIt")
+
+			button.addEventListener("click", function() {
+				//Set the fetch message
+				navigator.geolocation.getCurrentPosition(showPosition, error);
+			
+				//get the weather
+				var xhr = new XMLHttpRequest();
+				xhr.addEventListener("load", responseHandler);
+				xhr.responseType = "json";
+				let queryString = `lat=${lat}&lon=${lon}`;
+				xhr.open("GET", "getweather?"+queryString, true);
+				xhr.send();
+			});
+
+			function responseHandler(){
+				if ( this.status == 200 ){
+					let res = this.response;
+					//console.log("Reached");
+					updateDays(res.body.response[0].periods);
+				}else
+					console.log("failed");
+
+			}
+
+			function updateDays(days){
+				//console.log("Days reached");
+				let div = document.getElementById("Days")
+				for(d of days){
+					const {weather, maxTempF, minTempF, avgTempF} = d;
+					div.innerHTML += `<div class="tableSub"><p>Weather: ${weather}</p><p>Max Fahrenheit:${maxTempF}	Min Fahrenheit:${maxTempF}</p></div>`;
+				}
+			}
+
+		</script>
+
+	</body>
+</html>

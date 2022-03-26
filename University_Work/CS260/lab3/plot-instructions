@@ -1,0 +1,8 @@
+set output "plot.png"
+set terminal png
+
+#This line does the plotting
+plot "1.out" using 1:2
+plot "2.out" using 1:2
+
+

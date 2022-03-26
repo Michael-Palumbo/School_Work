@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script>
+
+  function find33(){
+    for(var a = 1 ; a <= 9 ; a++)
+      for(var b = 0 ; b <= 9 ; b++)
+        for(var c = 0; c <= 9 ; c++){
+          if(""+a+b+c == a*a*a+b*b*b+c*c*c)
+            document.getElementById('change').innerHTML += "<br>" + a+b+c ;
+        }
+  }
+
+  </script>
+
+  <title>Document</title>
+</head>
+<body>
+
+  <button type="button" style="font-size:30px" onclick="find33()">Click to Show</button>
+
+  <h1 id="change">The Narrisistec Numbers between 100 to 999 are:</h1>
+
+</body>
+</html>

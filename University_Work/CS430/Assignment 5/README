@@ -1,0 +1,11 @@
+Michael Palumbo
+CG_hw5
+
+Program coded on windows 10 through a bash terminal. I used python3 when developing this program. The CG_hw5 contains the main file (and everything else). To run it, you can use ./CG_hw5. If that doesn't work, python3 CG_hw5 is the safe alternative. I did not import any special libraries so I assume it'll run on tux fine.
+
+The program doesn't work fully as intented.
+
+Problems:
+The program's fill command does not work as intented, which you will easily see for yourself. After half a day on not figureing out, I just threw in the towel.
+
+P.S If you know the issue to the problems, I don't expect you to look for it ofcourse, but if you happen to stumble on it. I would love to know about it. 

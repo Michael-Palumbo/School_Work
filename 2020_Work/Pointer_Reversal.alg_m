@@ -1,0 +1,85 @@
+% Author: Devon Beckett                                                 00001000          
+% Date: 04-17-2018                                                      00002000          
+% Description: This program will take in a string as a parameter, and   00003000          
+%    reverse the order of the characters in each of the words in the    00004000          
+%    string, but leave the order of the words intact.                   00005000          
+                                                                        00005005          
+procedure reverse_word_chars(param);                                    00006000          
+array param[*];                                                         00007000          
+                                                                        00007400          
+begin                                                                   00008000          
+                                                                        00008020          
+   procedure swap(x,y);                                                 00008040          
+   pointer x, y;                                                        00008060          
+      begin                                                             00008080          
+      string temp;                                                      00008100          
+      temp := string(x,1);                                              00008120          
+      replace x by y for 1;                                             00008140          
+      replace y by temp;                                                00008160          
+   end;                                                                 00008180          
+                                                                        00008200          
+   procedure reverseWord(p1, p2);                                       00008220          
+   pointer p1, p2;                                                      00008240          
+   begin                                                                00008260          
+      % write(f, */, p1, p2);                                           00008280          
+      while offset(p1) < offset(p2) do begin                            00008300          
+         swap(p1, p2);                                                  00008320          
+         p1 := p1 + 1;                                                  00008340          
+         p2 := p2 - 1;                                                  00008360          
+      end;                                                              00008380          
+                                                                        00008400          
+   end;                                                                 00008420          
+                                                                        00008440          
+   define MaxInput = 256#; % Maximum string length to handle            00009000          
+   truthset delim("!@#$%*:;""",.?/ " or 48"00");                        00010000          
+   % used to find a space or null char                                  00010200          
+                                                                        00010250          
+   file f(kind=remote);                                                 00010260          
+                                                                        00010280          
+   % End of the program                                                 00010300          
+   label FINISH;                                                        00010400          
+                                                                        00010500          
+   %file f(kind=remote); % file for CANDE I/O                           00011000          
+   ebcdic array a[0:MaxInput]; % INPUT array                            00012000          
+   pointer pcur, pstart, temp;                                          00012500          
+   integer i, remaining; % used to test the scan statement              00016000          
+                                                                        00017000          
+   remaining := MaxInput;                                               00017200          
+                                                                        00017400          
+   % HANDLES NULL INPUT                                                 00017450          
+   if param eql 48"00" then begin                                       00017500          
+      write(f, //, "NO INPUT GIVEN");                                   00017600          
+      go FINISH;                                                        00017700          
+   end;                                                                 00017800          
+                                                                        00018000          
+   replace a by param for MaxInput until eql 48"00", 48"00";            00019000          
+                                                                        00020000          
+   % Add your code here.                                                00021000          
+                                                                        00059000          
+   pcur := a;                                                           00059050          
+                                                                        00059150          
+   % remaining is the remaining amount of string to search through      00059200          
+   while remaining neq 0 do begin                                       00059250          
+      % Skip over white space                                           00059300          
+      scan pstart:pcur for remaining:remaining while in delim;          00059350          
+      % Have pstart the beginning of the word, pcur be the end of it    00059400          
+      scan pcur:pstart for remaining:remaining until in delim;          00059450          
+      if remaining neq 0 then begin                                     00059500          
+         %write(f, */, offset(pstart), offset(pcur-1));                 00059550          
+         temp := pcur - 1; %can't pass pcur-1 in the arguments          00059560          
+         reverseWord(pstart, temp);                                     00059600          
+      end;                                                              00059620          
+   end;                                                                 00059650          
+                                                                        00059700          
+   % Trim the end of the output                                         00060000          
+   scan a[0] for i:MaxInput until eql 48"00";                           00061000          
+   resize(a, MaxInput-i, retain);                                       00062000          
+                                                                        00063000          
+   write(f, //, a);                                                     00063500          
+                                                                        00063550          
+   % LABEL FINISH                                                       00063600          
+   FINISH:                                                              00063700          
+   write(f, //, "Program finished");                                    00063750          
+                                                                        00063800          
+   %write(f, //, a2);                                                   00064000          
+end.                                                                    00065000          

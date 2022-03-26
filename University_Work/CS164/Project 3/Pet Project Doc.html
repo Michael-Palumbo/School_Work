@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <title>Doc: Pet Project</title>
+  <style>
+    table{
+      width:500px;
+      border-collapse:collapse;
+      margin-bottom: 10px;
+    }
+    td{
+      padding:4px;
+      width:100px;
+      border:1px solid #555;
+    }
+    p{
+      font-size:20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Charts</h1>
+  <p style="display:inline">Chart 1</p>
+  <table>
+    <tr>
+      <td>[STATES]</td><td>FEED</td><td>PET</td><td>WALK</td><td>CLEAN</td>
+    </tr>
+    <tr>
+      <td>HUNGRY</td><td>eating</td><td>angry</td><td>angry</td><td>angry</td>
+    </tr>
+    <tr>
+      <td>SLEEPING</td><td>eating</td><td>----</td><td>----</td><td>angry</td>
+    </tr>
+    <tr>
+      <td>NEUTRAL</td><td>eating</td><td>HAPPY</td><td>walking</td><td>angry</td>
+    </tr>
+    <tr>
+      <td>BATHROOM</td><td>angry</td><td>angry</td><td>walking</td><td>angry</td>
+    </tr>
+    <tr>
+      <td>HAPPY</td><td>eating</td><td>really happy</td><td>walking</td><td>soapy</td>
+    </tr>
+    <tr>
+      <td>DIRTY</td><td>----</td><td>----</td><td>----</td><td>soapy</td>
+    </tr>
+  </table>
+  <br><p style="display:inline">Chart 2</p>
+  <table>
+    <tr>
+      <td>1 Second Action States</td><td>Result After Timeout()</td>
+    </tr>
+    <tr>
+      <td>walking</td><td>HAPPY or DIRTY or HUNGRY</td>
+    </tr>
+    <tr>
+      <td>eating</td><td>NEUTRAL or SLEEPING</td>
+    </tr>
+    <tr>
+      <td>angry</td><td>[return to prev. STATE]</td>
+    </tr>
+    <tr>
+      <td>really happy</td><td>NEUTRAL or HUNGRY</td>
+    </tr>
+  </table>
+  <br><p style="display:inline">Chart 3</p>
+  <table>
+    <tr>
+      <td>5 Second STAES</td><td>Result After Timeout()</td>
+    </tr>
+    <tr>
+      <td>NEUTRAL</td><td>BATHROOM or HUNGRY</td>
+    </tr>
+    <tr>
+      <td>HAPPY</td><td>NEUTRAL</td>
+    </tr>
+    <tr>
+      <td>SLEEPING</td><td>NEUTRAL or BATHROOM</td>
+    </tr>
+  </table>
+  <h1>Back-Story:</h1>
+  <p>The Dog is named Kanobi, we Adopted him at Green Hills farm. He is generic
+    as dogs come. But he does like to stare out the window when he needs to go
+     to the bathroom.</p>
+  <h1>How My Code Works:</h1>
+  <p>My state system has 2 main parts; STATES and ACTION STATES. To illustrate
+    the map that the interaction of buttons and certain STATES create, I have drawn
+    a diagram (see Chart 1). Every time the user presses a button, the STATE changes
+    to a corresponding ACTION STATE (with exception to NUETRAL + Pet = HAPPY). I made
+    this decision because it only made sense for the pet to perform the action
+    before immediately going to the state that the button would inevitably result
+    in. Every ACTION STATE will display for a second before switching the pet into
+    the resultant STATE. STATES will remain constant for an indefinite amount of time
+    with exception of 3 STATES: NEUTRAL; HAPPY; SLEEPING. After 5 seconds, the
+    exceptions will resolve into another STATE.</p>
+  <br>
+  <p>   If we were to look at the code, we would see that we’re are creating 2 “arrays”
+    (one is an array, the other is a map). The first array named STATES, stores all of
+    our STATES; you’ll notice that at the end of the list is a STATE called “Action.” This
+    tells the code to instead look at our second array called SUBSTATES (You can also
+    call this the ACTION STATE Array).  The SUBSTATES array stores the action we are
+    performing as a key, and stores the resultant of said action in its value (eg.
+    ReallyHappy is the key, HAPPY is its value). We then have a function called
+    “displayCurrentState” which does exactly what it sounds like, displays the current
+    state to the virtual pet image (note if a parameter is passed to it, it’ll display
+    the parameter instead of the current state.).  We then have a function named
+    “setAction,” this function displays the current action, and also sets up a timer
+    to resolve that action into its value (see Chart 2). We then have 4 functions all
+    named similar to the buttons, that’s because the buttons call their respective
+    functions. These functions switch the states to an action. The very last function
+    is called whether the current state is NEUTRAL, SLEEPING, or HAPPY; and which it’ll
+    then set a 5 second timout to switch that state to another state (see Chart 3). I
+    skipped over a few functions because they were more or less helper functions to make
+    the code a little bit more readable. Of course not all of this taught in the course,
+    but I’ve programmed before.</p>
+</body>
+</html>

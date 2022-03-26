@@ -1,0 +1,57 @@
+# Michael Palumbo
+# CS472
+# November 3rd, 2021
+
+## Running:
+
+You can run the code in command like with:
+./server.py <log file> <port>
+or 
+python3 servery.py <log file> <port>
+
+the command should be followed by a file you want to write the log to, and the port
+
+eg: ./server.py log 2121
+
+** NOTICE ** 
+Credentials:
+- Username is cs472
+- Password is hw3. 
+(This info can also be found in the credentials file)
+
+## Comments on the program
+
+I ran this program on my Mac Pro computer. I found that it never had issues with the port and eprt commands, that are sometimes blocked on windows.
+That being said, atleast on my windows machine, port and eprt did not work, connection was always refused. But on my mac computer they work perfectly fine.
+
+PASV and EPSV commands do not work on either machine, I coded the logic and implementation if you want to take a look at it. I am not sure if this is because on the computers fire wall, so if they do happen to work on your machine, that would be fortunate of me
+
+All other commands work as intended
+
+## Files
+
+The main program is located in the server.py program.
+
+Credentials for log in are saved in credentials
+
+The sample server log run is saved to server_log
+
+HW3_DFA.png is the DFA 
+
+## Questions:
+
+1. Do you think that someone could hack into your FTP server? Why or why not? Through
+what methods?
+
+Most definitely someone can hack it. Someone on the same internet as you could easily sniff out your packets through an application like wireshark to discover what your username and password are, since they aren't encrypted at all when sent to the server. 
+
+2. Critique how FTP solves the problem of file transfer – what is good?
+What is bad? What is weird?
+
+Good: File transfer is extremely efficient on FTP servers, when i was younger, someone taught me how to transfer files through an FTP server, becuase going through the hosting provider took ages. It is also relatevely easy to set up, since you don't have to encrypt or take additional steps, but the lack of encryption does take me to the bad.
+Bad: It is not very secure. Even the password, is sent out opennly through wireshark. Anyone one that picks you as a target, could sniff out your packets and discover what your credientials are and what you are sending over the internet.
+Weird: While you can say the lack of encryption is weird, I find the second socket just as weird. An entirely new connection with its own port, just to send data, that might not take longer than a second.
+
+3. How hard would it be to make FTP use one channel (both command and data over the same socket) instead of two?
+
+I believe it would be challenging bud doable, (infact when i was coding hw2, didn't even realize I needed a second socket to begin with). BUT the main issue would arrive with the number delimters. The 3 character numbers helps the client and server to know what the other is asking. If we send a heap of data, how will we know that a series of 3 character in that heap of data doesn't tell the server that it needs to stop reading. It overall adds to a mess of confusion on both sides. With a data socket, both sides can rest assured that they don't need to parse any data in that heap of data looking for commands. If we wanted to create a one socket system, we'll have to define a new protocol that allows for a new flag in it's pdu, where when we are sending there will be a special flag saying whether this information is data or a command.

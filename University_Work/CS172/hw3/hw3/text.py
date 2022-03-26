@@ -1,0 +1,15 @@
+import pygame
+from Drawable import *
+
+class Text(Drawable):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+        pygame.font.init()
+        self.__font = pygame.font.SysFont("Times new roman",37)
+
+    def draw(self, surface, score):
+        textsurface = self.__font.render(f"Score: {score}", False, (0, 0, 0))
+        surface.blit(textsurface,(super().getX(),super().getY()))
+
+    def get_rect(self):
+        pass

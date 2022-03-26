@@ -1,0 +1,90 @@
+#!/bin/bash
+# unicode - a couple ways of getting at unicode characters
+#
+# Kurt Schmidt
+#	08/2019
+# 
+# GNU bash, version 4.4.19(1)-release (x86_64-pc-linux-gnu), on
+# GNU/Linux 4.15.0-48-generic x86_64 
+# 
+# EDITOR: tabstop=2, cols=120
+#
+
+function pt2hex {
+	# Given the code point of a UTF-8 char, spits out the Hex of the encoded character (if legal)
+	[ -z "$1" ] && return
+	echo -ne "\u$1" | xxd | sed 's/^[0-9]*:\s*//'
+}
+
+function border {
+	[ -z "$1" ] && return
+	len=${2:-80}
+	lines=${3:-2}
+	for ((i=0;i<lines;++i)) ; do
+		for ((j=0;j<len;++j)) ; do
+			printf "\u${1}" 
+		done
+		printf "\n"
+	done
+}
+
+echo "UTF-8 characters are enumerated.  It's called their \"code point\""
+
+echo "For storage, these characters are encoded, using 1, 2, 3, or 4 bytes."
+echo "I will not discuss how that happens.  You can find it in various places, including Wikipedia."
+echo "Know that you can use \`xxd' utility to go back and forth.  Examples coming."
+
+echo ""
+
+border 03a9
+	# https://en.wikipedia.org/wiki/UTF-8
+
+echo -e "\nsome utilites take the code point.  Others want the encoding."
+
+echo -e "In Linux these days you should be able to hit ctrl+shift+u <code>, where code is the code point.  It'll be"
+echo "translated for you when you hit a space, enter, etc."
+
+echo -e "\nHere's a table of a few characters, so you can play around:\n"
+
+printf "%5s %11s %12s\n" Char "Code Point" "UTF-8 (hex)"
+printf "  %3s %11s %11s\n" ¢ "U+00A2" "C2 A2"
+printf "  %3s %11s %11s\n" € "U+20AC" "E2 82 AC"
+printf "  %3s %11s %11s\n" ≫ "U+226B" "E2 89 AB"
+printf "  %3s %11s %11s\n" ☮ "U+262E" "E2 98 AE"
+printf "  %3s %11s %11s\n" ⚓ "U+2693" "E2 9A 93"
+printf "  %3s %11s %11s\n" ° "U+00B0" "C2 B0"
+printf "  %3s %11s %11s\n" Σ "U+03A3" "CE A3"
+
+echo -e "\nAnd a chessboard:"
+
+for i in {1..4} ; do
+	printf "🙾%1.0s" {1..4}
+	printf "\n"
+done
+
+echo -e "\nNote, the characters might not display properly, depending on the character set and encoding you"
+echo "have chosen."
+
+echo -e "\nThere are /many/ characters.  Math relations.  Astrology.  Emoji.  Characters for all the written"
+echo "(human) languages.  Dictionary and map symbols.  Recycling and laundry."
+
+	# See https://gist.github.com/ivandrofly/0fe20773bd712b303f78
+  # Even better:  https://www.utf8-chartable.de/unicode-utf8-table.pl
+
+echo -e "\nSo, on the command line, using echo, or printf, you can use the \\u escape character to provide the unicode"
+echo -e "point (though I'm having a problem getting it to work for 5 digits)."
+echo -e "E.g., echo -e \"\\\u03A9\" will print \u03A9"
+
+echo -e "\nThese utilities will also take the encoding, as hex digits."
+echo -e "echo -e \"\\\xce\\\xa9\" will display \xce\xa9"
+
+echo -e "\nAs you've seen, Bash understands UTF-8, replaces the point code with the character."
+
+echo -e "\nGiven a character, \`xxd' can give you the encoding in hex (or, whatever)."
+echo -e "echo -ne \"\\\u03B1\" | xxd yields"
+echo -e "00000000: ceb1, so, the hex code is CE B1"
+
+echo -e "\nIf you need to find an ascii character that is (hopefully) close to a Unicode, use iconv"
+echo -e "If \\\u00c2 is \u00c2, then:"
+echo -e "echo -en \"\\\u00c2\" | iconv -f utf8 -t ascii//TRANSLIT"
+echo -e "yields A"

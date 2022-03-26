@@ -1,0 +1,716 @@
+#!/usr/bin/env python3
+
+import sys
+from math import sin, cos, radians
+
+# 3D MATRIX VARIABLES
+PRPx = 0.0
+PRPy = 0.0
+PRPz = 1.0
+
+VRPx = 0.0
+VRPy = 0.0
+VRPz = 0.0
+
+VPNx = 0.0
+VPNy = 0.0
+VPNz = -1.0
+
+VUPx = 0.0
+VUPy = 1.0
+VUPz = 0.0
+
+umin = -0.7
+vmin = -0.7
+umax = 0.7
+vmax = 0.7
+
+front_face = 0.6
+back_face = -0.6
+
+d = 1 # Defined later
+
+parallel = False
+
+maxColor = 256
+currentColor = 0 # 0 red 1 green 2 blue
+
+nearz = 0
+farz = 0
+
+# Define some global variables
+world_x1 = 0
+world_x2 = 500
+world_y1 = 0
+world_y2 = 500
+
+view_x1 = 0
+view_x2 = 500
+view_y1 = 0
+view_y2 = 500
+
+width = 0
+height = 0
+
+fileName = [] # tuple of file name and color
+
+# Simple Point Object
+
+polygons = [] #Contains a list of vertexs
+
+vertexs = []
+faces = []
+
+class Vertex():
+	def __init__(self,x=None,y=None,z=None,d=None):
+		self.x = x
+		self.y = y
+		self.z = z
+		self.d = d
+
+	def clone(self):
+		return Vertex(self.x, self.y, self.z, self.d)
+
+	def getPoints(self):
+		return self.x, self.y, self.z
+
+	def __str__(self):
+		return str(self.x) + " " + str(self.y) + " " + str(self.z)
+
+class Polygon():
+	def __init__(self, vertices):
+		self.vertices = vertices
+
+	def get(self, n):
+		return self.vertices[n%len(self.vertices)]
+
+	def append(self, v):
+		self.vertices.append(v)
+
+	def getYMin(self):
+		Y_min = self.vertices[0].y
+		for v in self.vertices:
+			if v.y < Y_min:
+				Y_min = v.y
+		return Y_min
+
+	# def __str__(self):
+	# 	return str(self.vertices)
+
+def processArgs():
+	global fileName, view_x1, view_y1, view_x2, view_y2, PRPx, PRPy, PRPz, VRPx, VRPy, VRPz, VPNx, VPNy, VPNz, VUPx, VUPy, VUPz, umin, vmin, umax, vmax, parallel, back_face, front_face
+
+	argv = sys.argv
+	for i in range(1,len(argv),2):
+		if argv[i][0] == '-':
+			letter = argv[i][1]
+			if letter == "f":
+				fileName.append((argv[i+1], 0)) # 0 red
+			if letter == "g":
+				fileName.append((argv[i+1], 1)) # 1 green
+			if letter == "i":
+				fileName.append((argv[i+1], 2)) # 2 blue
+			elif letter == "x":
+				PRPx = float(argv[i+1])
+
+			elif letter == "y":
+				PRPy = float(argv[i+1])
+
+			elif letter == "z":
+				PRPz = float(argv[i+1])
+
+			elif letter == "X":
+				VRPx = float(argv[i+1])
+
+			elif letter == "Y":
+				VRPy = float(argv[i+1])
+
+			elif letter == "Z":
+				VRPz = float(argv[i+1])
+
+			elif letter == "q":
+				VPNx = float(argv[i+1])
+
+			elif letter == "r":
+				VPNy = float(argv[i+1])
+
+			elif letter == "w":
+				VPNz = float(argv[i+1])
+
+			elif letter == "Q":
+				VUPx = float(argv[i+1])
+
+			elif letter == "R":
+				VUPy = float(argv[i+1])
+
+			elif letter == "W":
+				VUPz = float(argv[i+1])
+
+			elif letter == "u":
+				umin = float(argv[i+1])
+
+			elif letter == "v":
+				vmin = float(argv[i+1])
+
+			elif letter == "U":
+				umax = float(argv[i+1])
+
+			elif letter == "V":
+				vmax = float(argv[i+1])
+
+			elif letter == 'P':
+				parallel = True
+
+			elif letter == 'B':
+				back_face = float(argv[i+1])
+
+			elif letter == 'F':
+				front_face = float(argv[i+1])
+			elif letter == 'j':
+				view_x1 = int(argv[i+1])
+			elif letter == 'k':
+				view_y1 = int(argv[i+1])
+			elif letter == 'o':
+				view_x2 = int(argv[i+1])
+			elif letter == 'p':
+				view_y2 = int(argv[i+1])
+
+#/////////////////////////////////////
+#//READING THE FILE
+#/////////////////////////////////////
+
+def readPS():
+	global polygons, vertexs, faces 
+
+	polygons = []
+	vertexs = []
+	faces = []
+
+	line = ""
+	f = open(currentFile,"r")
+
+	#Ignore all text until %%%BEGIN is reached
+	lines = f.readlines()
+
+	for line in lines:
+		args = line.split()
+		if line[0] == 'v':
+			x, y, z = args[1:]
+			vertexs.append(Vertex(float(x),float(y),float(z), 1.0))
+			# print(vertexs[len(vertexs)-1], file=sys.stderr)
+		elif line[0] == 'f':
+			faces.append(args[1:])
+			# a, b, c = args[1:]
+			# polygons.append(Polygon([vertexs[a], vertexs[b], vertexs[c], vertexs[a]])) # I append a to the end again, similar to how the ps were, might change later
+
+# ////////////////////////////////////////
+# //DEBUGGING TOOL FOR THE ARRAY LIST
+# ///////////////////////////////////////
+
+def printArray(array):
+	print( "ARRAY CHECKER [] ", file=sys.stderr)
+	for polygon in array:
+		for vertex in polygon.vertices:	
+			print("%f %f %f"%( vertex.x, vertex.y, vertex.z), file=sys.stderr)
+		print("BREAK---------", file=sys.stderr)
+
+
+# ///////////////////////////////////////
+# // THE CLIPPING SECTION
+# //////////////////////////////////////
+
+TOP = 0
+BOTTOM = 1
+LEFT = 2
+RIGHT = 3
+
+def clipping():
+
+		#Sutherland-Hodgman clipping
+
+		clipper(TOP)
+
+		clipper(RIGHT)
+
+		clipper(BOTTOM)
+
+		clipper(LEFT)
+
+def clipper(clip_boundary):
+	global polygons
+
+	# Array that contains a list of the new vertices for a polygon
+	for index in range(len(polygons)):
+		polygon = polygons[index].vertices
+
+		tempArray = []
+
+		for i in range(len(polygon)-1):
+			v1 = polygon[i]
+			v2 = polygon[i+1]
+
+			if inside(clip_boundary, v1):
+				if i == 0:
+					tempArray.append(v1)
+					# addVertex(&tempPolyList, v1);
+
+				if(inside(clip_boundary, v2)):
+					tempArray.append(v2)
+					# addVertex(&tempPolyList, v2);
+
+				else:
+					v = intersection(v1, v2, clip_boundary)
+					tempArray.append(v)
+					# addVertex(&tempPolyList, v);
+				
+			else:
+				if inside(clip_boundary, v2):
+					v = intersection(v2, v1, clip_boundary)
+					tempArray.append(v)
+					tempArray.append(v2)
+					# addVertex(&tempPolyList, v)
+
+					# addVertex(&tempPolyList, v2)
+		polygons[index] = Polygon(tempArray)
+		# polygon = tempArray
+
+	polygons = list(filter(lambda s: len(s.vertices) != 0, polygons))
+
+def inside(clip_boundary, v):
+
+		if (clip_boundary == TOP and v.y < world_y2):
+			return True
+
+		elif(clip_boundary == LEFT and v.x > world_x1):
+			return True
+
+		elif(clip_boundary == BOTTOM and v.y > world_y1):
+			return True
+
+		elif(clip_boundary == RIGHT and v.x < world_x2):
+			return True
+
+		return False
+
+
+def intersection(v1, v2, clip_boundary):
+	dx = v2.x - v1.x
+	dy = v2.y - v1.y
+
+	v = Vertex(0,0)
+
+	# //Vertical line condition
+	if(dx == 0 or dy == 0):
+		if(clip_boundary == TOP):
+			v.x = v1.x;
+			v.y = world_y2;
+		elif (clip_boundary == LEFT):
+			v.x = world_x1
+			v.y = v1.y
+		elif (clip_boundary == BOTTOM):
+			v.x = v1.x
+			v.y = world_y1
+		elif (clip_boundary == RIGHT):
+			v.x = world_x2
+			v.y = v1.y
+		return v
+	
+	slope = dy/dx;
+
+	if(clip_boundary == LEFT):
+		v.x = world_x1
+		v.y = (int) (slope * (world_x1 - v1.x) + v1.y)
+	
+	if(clip_boundary == RIGHT):
+		v.x = world_x2
+		v.y = (int) (slope * (world_x2 - v1.x) + v1.y)
+	if(clip_boundary == TOP):
+		v.x = (int) ((world_y2 - v1.y)/slope + v1.x)
+		v.y = world_y2
+	
+	if(clip_boundary == BOTTOM):
+		v.x = (int) ((world_y1 - v1.y)/slope + v2.x)
+		v.y = world_y1
+
+	return v
+
+def printPixels(pixels):
+	print("P3");
+	print("# test.pbm");
+	print(width, height);
+	print(maxColor)
+	for i in range(height-1, -1, -1):
+		for j in range(width):
+			print(pixels[i][j], end = " ")
+		print()
+
+def round_int():
+
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x = round(vertice.x)
+			vertice.y = round(vertice.y)
+
+def viewport_transformation():
+	print("PARMS FOR VIEWPORT", view_x1,view_x2,view_y1,view_y2,world_x1,world_x2,world_y1,world_y2, "lastly d", d,file=sys.stderr)
+	#//Translation to origin of world window
+
+	# printArray(polygons)
+
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x -= world_x1
+			vertice.y -= world_y1
+
+	#//Scaling to viewport
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x *=  (view_x2-view_x1) / (world_x2-world_x1)
+			vertice.y *= (view_y2-view_y1) / (world_y2-world_y1)
+	# printArray(polygons)
+	#//Translating to viewport origin
+	for polygon in polygons:
+		for vertice in polygon.vertices:
+			vertice.x += view_x1
+			vertice.y += view_y1
+
+# 3D Projections
+
+def leng(v):
+	s = 0
+	for ve in v:
+		s += ve**2
+	return s**.5
+
+def cross(a, b):
+    return [a[1]*b[2] - a[2]*b[1],
+         a[2]*b[0] - a[0]*b[2],
+         a[0]*b[1] - a[1]*b[0]]
+
+def multiply(a, b):
+	result = [  [0,0,0,0],
+				[0,0,0,0],
+				[0,0,0,0],
+				[0,0,0,0]
+			 ]
+
+	# iterate through rows of a
+	for i in range(len(a)):
+		# iterate through columns of b
+		for j in range(len(b[0])):
+			# iterate through rows of b
+			for k in range(len(b)):
+				result[i][j] += a[i][k] * b[k][j]
+
+	return result
+
+def transformations():
+
+	# Translation Matrix
+
+	T = [
+		[1, 0, 0, -VRPx],
+		[0, 1, 0, -VRPy],
+		[0, 0, 1, -VRPz],
+		[0, 0, 0, 1]
+		]
+
+	# Rotation Matrix
+
+	VPN_length = leng([VPNx, VPNy, VPNz])
+	Rz = [VPNx / VPN_length, VPNy / VPN_length, VPNz / VPN_length]
+
+	# print("Rz", Rz, file=sys.stderr)
+
+	# print("VUP", [VUPx,VUPy,VUPz], file=sys.stderr)
+
+	tempRx = cross([VUPx,VUPy,VUPz], Rz)
+	tempRx_length = leng(tempRx)
+	Rx = [tempRx[0] / tempRx_length, tempRx[1] / tempRx_length, tempRx[2] / tempRx_length]
+
+	Ry = cross(Rz, Rx)
+
+	R = [
+		[Rx[0], Rx[1], Rx[2], 0],
+		[Ry[0], Ry[1], Ry[2], 0],
+		[Rz[0], Rz[1], Rz[2], 0],
+		[0, 0, 0, 1]
+		] 
+
+	# Sheer Matrix
+
+	SH = [
+		[1, 0, ((.5 * (umax + umin)) - PRPx) / PRPz, 0],
+		[0, 1, ((.5 * (vmax + vmin)) - PRPy) / PRPz, 0],
+		[0, 0, 1, 0],
+		[0, 0, 0, 1]
+		]
+
+	result = multiply(R, T)
+
+	if parallel:
+		Tpar = [
+			[1, 0, 0, -(umax + umin)/2],
+			[0, 1, 0, -(vmax + vmin)/2],
+			[0, 0, 1, -front_face],
+			[0, 0, 0, 1]
+			]
+
+		Spar = [
+			[2/(umax-umin), 0, 0, 0],
+			[0, 2/(vmax-vmin), 0, 0],
+			[0, 0, 1/(front_face-back_face), 0],
+			[0, 0, 0, 1]
+			]
+
+		result = multiply(SH, result)
+		result = multiply(Tpar, result)
+		result = multiply(Spar, result)
+
+	else:
+		Tprp = [
+			[1, 0, 0, -PRPx],
+			[0, 1, 0, -PRPy],
+			[0, 0, 1, -PRPz],
+			[0, 0, 0, 1]
+			]
+
+		# PRPz might need to be negative
+		Sper = [
+			[(2 * PRPz)/((umax-umin) * (PRPz - back_face)), 0, 0, 0],
+			[0, (2 * PRPz)/((vmax-vmin) * (PRPz - back_face)), 0, 0],
+			[0, 0, 1/(PRPz-back_face), 0],
+			[0, 0, 0, 1]
+			]
+
+		result = multiply(Tprp, result)
+		result = multiply(SH, result)
+		result = multiply(Sper, result)
+
+	for i in range(len(vertexs)):
+		v = vertexs[i]
+		new_vertex = multiply(result, [[v.x],[v.y],[v.z],[v.d]])
+		# if parallel:
+		# 	new_vertex[2][0] = 0
+		vertexs[i] = Vertex(new_vertex[0][0],new_vertex[1][0],new_vertex[2][0],1)
+
+
+	# Debugging Print
+	print("MATRIX FOR NORMALIZING[]", file=sys.stderr)
+	for r in result:
+		print(r, file=sys.stderr)
+
+def projection():
+	for v in vertexs:
+		denom = v.z/d
+		if denom != 0:
+			v.x = v.x/denom
+			v.y = v.y/denom
+
+def convert_faces():
+	for f in faces:
+		a, b, c = f # hopefully faces are always triangles
+		polygons.append(Polygon([vertexs[int(a)-1].clone(), vertexs[int(b)-1].clone(), vertexs[int(c)-1].clone()]))
+
+def findz(polygon, xa,ya,xb,yb, xp, yp):
+	x1, y1, z1 = polygon.get(0).getPoints()
+	x2, y2, z2 = polygon.get(1).getPoints()
+	x3, y3, z3 = polygon.get(2).getPoints()
+
+	# print(polygon.get(0).getPoints(),file=sys.stderr)
+	# print(polygon.get(1).getPoints(),file=sys.stderr)
+	# print(polygon.get(2).getPoints(),file=sys.stderr)
+
+	length1a = length(xa - x1, ya - y1, 0)
+	length2a = length(x2 - x1, y2 - y1, 0)
+
+	za = z1 + (length1a/length2a) * (z2-z1)
+
+	length1b = length(xb - x1, yb - y1, 0)
+	length2b = length(x3 - x1, y3 - y1, 0)
+
+	zb = z1 + (length1b/length2b) * (z3-z1)
+
+	# print("xb", xb, "xa",xa, file=sys.stderr)
+
+	length1p = length(xp - xa, yp - ya, 0)
+	length2p = length(xb - xa, yb - ya, 0)
+
+	zp = za + length1p/length2p * (zb - za)
+
+	return zp
+
+def sort(scan_vertices):
+	# for i in range(len(scan_vertices)):
+	# 	scan_vertices[i].sort(key=lambda v: v.x)
+	scan_vertices.sort(key=lambda v: v.x)
+
+def length(x,y,z):
+	return (x*x + y*y + z*z)**.5
+
+def scan_fill(intersection_points, polygon):
+
+	for j in range(0,len(intersection_points),2):
+		x1, y1, _ = intersection_points[j].getPoints()
+		x2, y2, _ = intersection_points[j+1].getPoints()
+
+		xp = x1
+		# print("xp", xp, "x2",x2, file=sys.stderr)
+		while xp < x2:
+			pz = findz(polygon, x1,y1,x2,y2, xp, y1)
+			# print("xp",xp,"pz", pz, "x2", x2,file=sys.stderr)
+			if y1 < 0 or y1 > 500:
+				break
+			if xp < 0 or xp > 500:
+				break
+
+			#print("pz", pz, "front_face",front_face,file=sys.stderr)
+
+			if pz < front_face and pz > zbuffer[round(y1)][round(xp)]:
+				zbuffer[round(y1)][round(xp)] = pz
+
+				shade = int(maxColor * (pz - farz)/(nearz - farz))
+
+				if shade >= maxColor:
+					shade = maxColor - 1
+				elif shade < 0:
+					shade = 0
+
+				if currentColor == 0: # red
+					# print("colored",file=sys.stderr)
+					pixels[round(y1)][round(xp)] = "%d 0 0 "%shade
+				if currentColor == 1: # green
+					pixels[round(y1)][round(xp)] = "0 %d 0 "%shade
+				if currentColor == 2: # blue
+					pixels[round(y1)][round(xp)] = "0 0 %d "%shade
+
+				# something about color here
+			xp += 1
+
+def getMaxY(polygon):
+	maxY = polygon.vertices[0].y
+	for vertice in polygon.vertices:
+		if vertice.y > maxY:
+			maxY = vertice.y
+	return maxY
+
+def getMinY(polygon):
+	minY = polygon.vertices[0].y
+	for vertice in polygon.vertices:
+		if vertice.y < minY:
+			minY = vertice.y
+	return minY
+
+def calculate_intersection(x1,y1,x2,y2, y, ymin):
+	dx = x2 - x1
+	dy = y2 - y1
+
+	x = x1 + (dx/dy)*(y - y1)
+
+	return Vertex(x,y)
+
+def polygon_filling():
+
+	# Scanline filling
+	for polygon in polygons:
+		ymax = getMaxY(polygon)
+		ymin = getMinY(polygon)
+
+		edge_list = []
+
+		for y in range(int(ymin), int(ymax)+1):
+			edge_list.append([])
+
+		for j in range(len(polygon.vertices)): # should loop thrice 
+			min_edge = polygon.get(j).y
+			max_edge = polygon.get(j+1).y
+			for y in range(int(ymin), int(ymax)+1): # for each line between ymin and ymax
+				if ((y >= int(min_edge) and y < int(max_edge)) or \
+						(y >= int(max_edge) and y < int(min_edge))) and \
+						int(min_edge) != int(max_edge): # not a horizontal line
+					x1 = polygon.get(j).x
+					x2 = polygon.get(j+1).x
+					# print("added edge j, y", x1, min_edge, x2, max_edge, y ,file=sys.stderr)
+					edge_list[int(y-ymin)].append([x1,min_edge,x2,max_edge]) # should always have a pair
+
+		for y in range(int(ymin), int(ymax)+1): 
+			intersection_points = []
+
+			for j in range(len(edge_list[int(y-ymin)])):
+				x1,y1,x2,y2 = edge_list[int(y-ymin)][j]
+				# print("x1,y1,x2,y2",x1,y1,x2,y2, file=sys.stderr)
+				v = calculate_intersection(x1,y1,x2,y2, y, ymin)
+				# print("j vertex", j, v.x, v.y, file=sys.stderr)
+				intersection_points.append(v) # should always have a pair
+
+			sort(intersection_points)
+			scan_fill(intersection_points, polygon)
+
+#////////////////////////
+#// MAIN
+#////////////////////////
+if __name__ == "__main__":
+
+	currentFile = "cube.smf"
+
+	processArgs()
+
+	d = PRPz / (back_face - PRPz)
+
+	width = 501
+	height = 501
+
+	# print("height", height, "width", width, file=sys.stderr)
+
+	pixels = []
+	for i in range(height):
+		col = []
+		for i in range(width):
+			col.append("0 0 0 ")
+		pixels.append(col)
+
+	zbuffer = []
+	for i in range(height):
+		col = []
+		for i in range(width):
+			col.append(-1)
+		zbuffer.append(col)
+
+	if parallel:
+			world_x1 = -1.0
+			world_y1 = -1.0
+
+			world_x2 = 1.0
+			world_y2 = 1.0
+
+			nearz = 0
+			farz = -1
+
+	else:
+		world_x1 = -abs(d)
+		world_y1 = -abs(d)
+
+		world_x2 = abs(d)
+		world_y2 = abs(d)
+
+		nearz = (PRPz - front_face)/(back_face - PRPz)
+		farz = -1
+
+	for file, color in fileName:
+		currentFile = file
+		currentColor = color
+
+		readPS()
+
+		transformations()
+
+		if not parallel:
+			projection()
+
+		convert_faces()
+
+		viewport_transformation()
+
+		polygon_filling()
+
+	printPixels(pixels)

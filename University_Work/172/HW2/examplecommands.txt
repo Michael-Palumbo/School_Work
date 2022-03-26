@@ -1,0 +1,11 @@
+new song SongName 5 Artist Album
+new picture PictureName 5 200
+new movie MovieName 5 Director 1
+
+play song SongName
+play movie MovieName
+display PictureName
+
+list
+
+exit

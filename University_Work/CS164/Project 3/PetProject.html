@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Virtual Pet</title>
+
+  <script>
+
+    let img, displayTag;
+
+    function state(stateName){
+      return STATES.indexOf(stateName);
+    }
+
+    //Dicided that objects didn't add anything that maps couldn't
+    // function SConst(name){
+    //   this.name = name;
+    //   this.jpg = `${name}.jpg`;
+    // }
+    // function SubConst(name, list){
+    //   this.name = name;
+    //   this.jpg = `${name}.jpg`;
+    //   this.optionalResults = list;
+    // }
+
+    // const STATES = [new SConst("Hungry"),
+    //                 new SConst("Sleeping"),
+    //                 new SConst("Neutral"),
+    //                 new SConst("Bathroom"),
+    //                 new SConst("Happy"),
+    //                 new SConst("Dirty"),
+    //                 new SConst("Action")];
+
+    const STATES = ["Hungry","Sleeping","Neutral","Bathroom","Happy","Dirty","Action"];
+
+    const SUBSTATES = new Map(); //I know, why use a map if no keys are repeating
+      SUBSTATES.set("Walking"    ,["Happy","Dirty","Hungry"]);
+      SUBSTATES.set("Eating"     ,["Neutral","Sleeping","Happy"]);
+      SUBSTATES.set("Angry"      ,[]);
+      SUBSTATES.set("ReallyHappy",["Happy"]);
+      SUBSTATES.set("Soapy"      ,["Neutral","Hungry"]);
+    // const SUBSTATES = {"Walking":["Happy","Dirty","Hungry"],
+    //                    "Eating" :["Neutral","Sleeping","Happy"],
+    //                     "Angry" :[],
+    //                "ReallyHappy":["Happy"],
+    //                     "Soapy" :["Neutral","Hungry"]};
+
+    let currentState = state("Neutral");
+    let prevState;
+
+    let timer = null;
+
+    function displayCurrentState(forceImage){
+      if(forceImage !== undefined){
+        img.src = `DOG_1/${forceImage}Dog.jpg`;
+        displayTag.innerHTML = `Dog is ${forceImage}`;
+
+      }
+      else{
+        img.src = `DOG_1/${STATES[currentState]}Dog.jpg`; console.log(`Called : ${STATES[currentState]}`);
+        displayTag.innerHTML = `Dog is ${STATES[currentState]}`;
+
+        if(["Happy","Neutral","Sleeping"].includes(STATES[currentState]))
+          timerToExitState();
+      }
+    }
+
+    function setAction(action){;
+      setState("Action")
+      clearInterval(timer);
+      timer = setTimeout(() =>{currentState = optionalReturns(SUBSTATES.get(action)); displayCurrentState()} ,1000);
+      displayCurrentState(action);
+    }
+
+    function setState(nState){
+      prevState = currentState;
+      currentState = state(nState);
+    }
+
+    function optionalReturns(list){
+      if(list.length == 0)
+        return prevState == state("Happy") ? state("Neutral") : prevState;
+      return state(list[~~(Math.random()*list.length)]);
+    }
+
+    function Feed(){
+      if(currentState == state("Action")) return;
+
+      switch(currentState){
+        case state("Bathroom"):
+          setAction("Angry");
+          break;
+        default:
+          setAction("Eating");
+      }
+    }
+
+    function Pet(){
+      if(currentState == state("Action")) return;
+
+      switch(currentState){
+        case state("Sleeping"):
+          break;
+        case state("Neutral"):
+          setState("Happy");
+          displayCurrentState();
+          break;
+        case state("Happy"):
+          setAction("ReallyHappy");
+          break;
+        default:
+          setAction("Angry");
+      }
+    }
+
+    function Walk(){
+      if(currentState == state("Action")) return;
+
+      switch(currentState){
+        case state("Sleeping"):
+          break;
+        case state("Neutral"):
+          setAction("Walking");
+          break;
+        case state("Bathroom"):
+          setAction("Walking");
+          break;
+        case state("Happy"):
+          setAction("Walking");
+          break;
+        default:
+          setAction("Angry");
+      }
+    }
+
+    function Clean(){
+      if(currentState == state("Action")) return;
+
+      switch(currentState){
+        case state("Dirty"):
+          setAction("Soapy")
+          break;
+        default:
+          setAction("Angry");
+      }
+    }
+
+    function timerToExitState(){
+      clearInterval(timer);
+      switch(currentState){
+        case state("Neutral"):
+          timer = setTimeout(() => {setState(STATES[ optionalReturns(["Hungry","Bathroom"]) ]); displayCurrentState();} , 4000);
+          break;
+        case state("Sleeping"):
+          timer = setTimeout(() => {setState(STATES[ optionalReturns(["Neutral","Bathroom"]) ]);displayCurrentState();} , 4000);
+          break;
+        case state("Happy"):
+          timer = setTimeout(() => {setState("Neutral"); displayCurrentState();} , 4000);
+          break;
+      }
+
+    }
+
+  </script>
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #F2EABC;
+    }
+    img{
+      border-radius:20px 20px 0px 0px;
+    }
+    button{
+      border-radius:20px;
+      background-color: #194756;
+      color:#F2EABC;
+      display:inline;
+      border:none;
+      padding:5px;
+      margin:5px;
+      width:80px;
+      text-align:center;
+      cursor:pointer;
+    }
+    h1{
+      font-size:50px;
+      margin:10px;
+      color:#080000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    div h1{
+      font-size:25px;
+      margin:2px;
+      color:#080000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    div{
+      border-radius:20px;
+      margin-bottom:20px;
+      padding:0px;
+      /*border:2px solid #6ee;*/
+      display:table;
+      background-color: #54736E;
+    }
+    a{
+      padding:2px 75px;
+      border-radius:20px;
+      background-color: #194756;
+      text-decoration: none;
+      text-decoration-color: none;
+      color:#F2EABC;
+    }
+  </style>
+</head>
+<body>
+  <center>
+    <h1>Virtual Pet</h1>
+    <div>
+        <img width="400px" height="500px" src="DOG_1/NeutralDog.jpg" id="images"><br>
+
+        <h1 id="DisplayState">Dog is Neutral</h1>
+
+        <button onclick="Feed()" >Feed </button>
+        <button onclick="Pet()"  >Pet  </button>
+        <button onclick="Walk()" >Walk </button>
+        <button onclick="Clean()">Clean</button>
+    </div>
+    <a href="Pet Project Doc.html" target="_blank">Click here to get to Documentation</a>
+  </center>
+
+
+  <script>
+    img = document.getElementById("images");
+    displayTag = document.getElementById("DisplayState")
+  </script>
+</body>
+</html>

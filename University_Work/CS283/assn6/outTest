@@ -1,0 +1,20 @@
+total 49
+drwxrwxrwx 1 ujurax ujurax   512 Aug 19 23:57 .
+drwxrwxrwx 1 ujurax ujurax   512 Aug 19 14:08 ..
+-rwxrwxrwx 1 ujurax ujurax    94 Aug 19 21:56 inpTest
+-rwxrwxrwx 1 ujurax ujurax     0 Aug 19 23:57 outTest
+-rwxrwxrwx 1 ujurax ujurax     0 Aug 19 20:06 outTest2
+-rwxrwxrwx 1 ujurax ujurax 17968 Aug 19 23:57 sh283
+-rwxrwxrwx 1 ujurax ujurax  4902 Aug 19 23:57 sh283.c
+-rwxrwxrwx 1 ujurax ujurax   510 Aug 19 20:32 test.c
+-rwxrwxrwx 1 ujurax ujurax 16856 Aug 19 20:34 test.o
+total 49
+drwxrwxrwx 1 ujurax ujurax   512 Aug 19 23:57 .
+drwxrwxrwx 1 ujurax ujurax   512 Aug 19 14:08 ..
+-rwxrwxrwx 1 ujurax ujurax    94 Aug 19 21:56 inpTest
+-rwxrwxrwx 1 ujurax ujurax   481 Aug 19 23:57 outTest
+-rwxrwxrwx 1 ujurax ujurax     0 Aug 19 20:06 outTest2
+-rwxrwxrwx 1 ujurax ujurax 17968 Aug 19 23:57 sh283
+-rwxrwxrwx 1 ujurax ujurax  4902 Aug 19 23:57 sh283.c
+-rwxrwxrwx 1 ujurax ujurax   510 Aug 19 20:32 test.c
+-rwxrwxrwx 1 ujurax ujurax 16856 Aug 19 20:34 test.o

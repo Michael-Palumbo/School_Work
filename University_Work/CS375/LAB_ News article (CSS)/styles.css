@@ -1,0 +1,24 @@
+img {
+	width:300px;
+}
+h1 {
+	background:red;
+	color:white;
+	padding:5px;
+	font: 24px "Arial";
+	color: white;
+}
+
+#author-name-and-date {
+	font: 12px "Arial";
+	color: lightgray;
+}
+
+p, ol {
+	font:16px "Times New Roman";
+	color: gray;
+}
+a {
+	font: 12px "Arial";
+	color: blue;
+}

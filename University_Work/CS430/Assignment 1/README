@@ -1,0 +1,10 @@
+Michael Palumbo
+
+The program can be given a PS file, and use said instructions to contruct a PBM image. the program will read the PS ignoring everything until it reaches %%%BEGIN. It will then read all the instuctions and ignore everything after %%%END, empty newlines will be ignored in the instructions. The program can also take arguments, transforming the size, scale, and rotation. and allows you to offset the viewing window.
+
+The program is written in C, on my windows computer. But is compiled in a linux emulator using gcc. 
+
+There is only one C program, called CG_hw1, which contains the main method and everything else. I should have used headers, but that's something i'll resolve next assignment.
+
+To compile my program, simply type 'make'
+This will compile the program and the executable will be CG_hw1

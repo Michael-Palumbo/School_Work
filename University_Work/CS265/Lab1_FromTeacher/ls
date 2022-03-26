@@ -1,0 +1,7 @@
+#!/bin/bash
+#  An example of why you might not want to have the current directory in
+#  $PATH; or, if you do, make sure it's last.
+#
+
+echo "I just emailed myself your credit cards"
+echo "And erased your hard drive"

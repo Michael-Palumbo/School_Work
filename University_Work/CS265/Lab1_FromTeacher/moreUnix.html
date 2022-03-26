@@ -1,0 +1,308 @@
+<html>
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta name="Author" content="Kurt Schmidt">
+	<script language="JavaScript" src="../Scripts/courseFormat.js"></script>
+	<title>Lab 2 - More Unix</title>
+</head>
+
+<body text="#330099" link="#000066" vlink="#000066" alink="#FF0000"
+	background="../../../images/spiral_notebook.gif">
+
+<font size="+2">
+
+<ul>
+
+<h1>Lab 2 - More Unix</h1>
+
+<p>If you do <b>not</b> yet have an account on the CS department machines,
+	follow this link: <a target="_blank" href=
+	"http://www.cs.drexel.edu/page.php?name=accounts.html">
+	http://www.cs.drexel.edu/page.php?name=accounts.html</a>
+<br>Remember to click the OK button only <i>once</i></p>
+
+<p>Okay, just follow along, questions will be denoted with a
+<b><font size="=1">Q</font></b>.  Fill in answers in a text file called
+<tt>lab2</tt>.</p>
+
+<ol>
+	<li>I've added a bit to my <a target="cs265" href=
+		"http://www.cs.drexel.edu/~kschmidt/Ref/unix_reference.html">
+		basic Unix reference page</a>, so take a look at it.
+	</li>
+
+	<li>Bash, when a login shell is created, attempts to read
+	<tt>.bash_profile</tt>, <tt>.bash_login</tt>, and <tt>.profile</tt> (which
+	is also used by Korn), in that order.  Stops trying upon the first success.
+	If a bash shell that is <b>not</b> a login shell is invoked, it reads
+	from <tt>.bashrc</tt>
+	</li>
+
+	<li>type <tt>ls .b*</tt> to see if you have any files there.  You may
+	copy <tt>.bash_profile</tt> and <tt>.bashrc</tt> from
+	<tt>~kschmidt/CS265/Labs/2</tt>, if you wish.  If you have files there
+	already, you probably want to back them up.  (Copy <tt>.bashrc</tt>
+	to <tt>.bashrc.bak</tt>, e.g.)
+
+	<li>Look for a .exrc, and, if you don't have one (and want one), copy
+	that from my directory as well.</li>
+
+	<li>At this point, wait for me, I want to go over these things a little
+	bit.</li>
+
+	<h2>Variable substitution</h2>
+
+	<li>Make some appropriate subdirectory for this lab</li>
+
+	<li>We'll use the <tt>echo</tt> command to look at variables</li>
+
+	<li>Common shell variables (bash):
+		<table>
+			<tr>
+				<td>$?</td>
+				<td>return value of last command</td>
+			</tr>
+			<tr>
+				<td>$$</td>
+				<td>PID of this shell</td>
+			</tr>
+			<tr>
+				<td>$<i>n</i></td>
+				<td><i>n</i>th argument</td>
+			</tr>
+			<tr>
+				<td>$PATH</td>
+				<td>search path</td>
+			</tr>
+			<tr>
+				<td>$HOME</td>
+				<td>your home directory</td>
+			</tr>
+			<tr>
+				<td>$PWD</td>
+				<td>the current (working) directory</td>
+			</tr>
+			<tr>
+				<td>$USER</td>
+				<td>your userid</td>
+			</tr>
+			<tr>
+				<td>$PS1</td>
+				<td>your main prompt</td>
+			</tr>
+	</li>
+	<li>Type <tt>echo $USER</tt></li>
+	<li>Try w/the rest (don't worry about $<i>n</i> for now)
+	<li>You can create variables:  <tt>MyVar="some string here"</tt> (Note,
+	no spaces around the '=')</li>
+	<li>Change your prompt (but save the old one):
+		<blockquote><tt>
+			savePrompt="$PS1"
+			<br>PS1="What now? " (or, whatever you want.  You need the quotes)
+			<br>PS1="$savePrompt"
+		</tt></blockquote>
+	</li>
+
+
+	<h2>Shell wildcards and special symbols</h2>
+
+	<li>The shell reserves certain characters.  These include <tt>*</tt>,
+	which matches any number of characters, and <tt>?</tt>, which matches
+	exactly 1 character.  A space is used to separate tokens.</li>
+
+	<li>Copy the following files from my directory (lab 2):
+	<tt>annoy annoy.cc example example2 TelecomTruths UnitTestingPhase</tt></li>
+
+	<li>Execute each of the following lines:
+		<blockquote><tt>
+			ls *
+			<br>ls a*
+			<br>ls *m*
+			<br>ls anno?
+			<br>ls annoy?
+		</tt></blockquote>
+
+		<p><b><font size="+1">Q 1</font></b>: What is the output of each of these?
+
+	<li>We can suppress these special meanings in different ways:
+		<ul>
+			<li><tt>\</tt> is the escape character</li>
+			<li>single quotes (suppresses all special meanings)</li>
+			<li>double quotes, keeps variable substitution, <tt>$</tt>, command
+			substitution (back quotes), and the escape character, <tt>\</tt></li>
+		</ul>
+	</li>
+
+	<li>Create a file w/a space in the name:  <tt>vi a space</tt>
+
+	<p><b><font size="+1">Q 2</font></b>:  What happened?
+	</li>
+
+	<li>Quit out of both those files, w/out saving</li>
+
+	<li>try again:  <tt>vi "a space"</tt></li>.  Type something in, save.</li>
+
+	<li>Remove it:  <tt>rm a\ space</tt>.  2 different ways to do the same
+	</li>
+
+	<h2>command substitution</h2>
+
+	<li>If the shell sees back quotes, it will execute the quoted command,
+	and replaced the quoted expression w/the output (stdout) of the command.
+
+	<li>try each of the following commands.
+	<br><b><font size="+1">Q 3</font></b>:
+	record the output:
+
+		<ul type="a">
+			<li><tt>echo Is a &lt; b?</tt></li>
+			<li><tt>echo "Is a &lt; b?"</tt></li>
+			<li><tt>echo "\$USER is $USER"</tt></li>
+			<li><tt>echo '\$USER is $USER'</tt></li>
+			<li><tt>echo "Today is `date`"</tt></li>
+			<li><tt>echo 'Today is `date`'</tt></li>
+			<li><tt>echo -e "Files that start w/e:\n`ls e*`"</tt></li>
+		</tt></ul>
+	
+	<h2>Files</h2>
+
+	<p><b><font size="+1">Q 4</font></b>What is the difference between
+	<tt>sort example2</tt> and <tt>sort -n example2</tt>?
+
+	<p><b><font size="+1">Q 5</font></b>How would you list the 8 items
+	w/the <i>highest</i> numbers, in <i>descending</i> order?
+
+	<li>type <tt>du -bs *</tt></li>
+
+	<li>now try <tt>du -bs * | sort -nr | head -4</tt></li>
+
+	<li>Go to your home directory and try it, then come back here.  Now
+	you can find where the bulk of your quota is hiding</li>
+
+	<h2>Archiving</h2>
+
+	<li>Tar all the files in your directory:  <tt>tar cvf lab2.tar *</tt></li>
+	<li>Make sure you got it all:  <tt>tar tf lab2.tar</tt></li>
+	<li>Now zip that file up:  <tt>gzip lab2.tar</tt>
+
+	<p><b><font size="+1">Q 6</font></b>  The tar file is gone.  What is
+	in its place?
+
+	<li>Delete that file, we'll do it all at once:
+		<blockquote><tt>
+			tar cvf - * | gzip > lab2.tgz
+		</blockquote</tt>
+		Okay, delete the tgz file.
+	</li>
+
+	<li>If you have a newer <tt>tar</tt>, we can be even slicker:
+		<blockquote><tt>
+			tar cvzf lab2.tgz *
+		</blockquote</tt>
+	</li>
+
+	<li>Make a copy of that file:  <tt>cp lab2.tgz lab2.2.tgz</tt></li>
+
+	<li>Okay, now let's extract gzip and tar files:
+		<blockquote><tt>
+			gunzip lab2.tgz
+		</blockquote</tt>
+		<p><b><font size="+1">Q 7</font></b>: What happened to the <tt>*.tgz</tt>
+		file?
+	</li>
+
+	<li>To untar a tar file:
+		<blockquote><tt>
+			mkdir play
+			<br>mv lab2.tar lab2.2.tgz play
+			<br>cd play
+			<br>tar xvf lab2.tar
+		</blockquote</tt>
+	</li>
+
+	<li>To do that all at once:
+		<blockquote><tt>
+			gunzip -c lab2.2.tgz | tar xvf -
+		</blockquote</tt>
+
+		<p>Or, if you're on a Linux box:
+
+		<blockquote><tt>
+			tar xvzf lab2.2.tgz
+		</blockquote</tt>
+	</li>
+
+	<li>Clean up:
+		<blockquote><tt>
+			cd ..
+			<br>\rm -rf Play
+		</blockquote</tt>
+
+	<h2>Looking around</h2>
+
+	<li><b><font size="+1">Q 1</font></b>:  Use <tt>grep</tt> to find if any
+	files in this lab mention "Vacation".</li>
+
+	<li>Now where did I put that?  Go to your home directory, and us
+	<tt>find</tt> to find that file you were working on, <tt>lab2</tt>.
+
+
+	<h2>Submission</h2>
+
+	<p>Submit the single file, <tt>lab2</tt> to WebCT when you're done.
+
+	<p>Browsers will only use the local filesystem when searching for files
+	to upload, so if you've used telnet or SSH from your Windows machine
+	(or, any machine not on the CS network), you won't be able to find
+	those files.
+
+	<p>There are 2 ways around this:
+	<ol>
+		<li>Log in on one of the department Unix machines in the lab upstairs
+		in Korman.  Kick off a browser (probably Netscape or Mozilla), and
+		do what you need to.  No muss, no fuss.  Just don't forget to log
+		out.</li>
+
+		<li>Or, you can pull the files down to your local machine using FTP
+		or scp.
+
+		<p>Note: ssh, sftp, and scp are of the same family.  If you've downloaded
+		them from Drexel's software site, the programs are actually named
+		ssh2, sftp2, and scp2, respectively</p>
+
+		<p>This would be a sample session using sftp2.  Open a command window:
+
+		<blockquote><tt>
+			c:\&gt; cd tmp </tt>(Whatever directory you want)<tt><br>
+			c:\&gt; sftp2 kschmidt@queen.cs.drexel.edu</tt> (Use your ID)<tt><br>
+			&nbsp;&nbsp;Password:<br>
+			ftp&gt; cd CS265<br>
+			ftp&gt; get chmod_lab<br>
+			ftp&gt; get vi_lab<br>
+			ftp&gt; quit<br>
+		</tt></blockquote>
+
+		<p>It would be very similar with the standard FTP, but you would start
+		it with 
+		
+		<blockquote><tt>
+			c:\&gt; ftp queen.cs.drexel.edu
+		</tt></blockquote>
+
+		<p>and just follow the login prompts.
+
+		<p>scp would look something like this:
+
+		<blockquote><tt>
+			c:&gt; scp2 kschmidt@queen.cs.drexel.edu:/home/kschmidt/CS265/chmod_lab .<br>
+			&nbsp;&nbsp;Password:<br>
+		</tt></blockquote>
+	</ol>
+
+</ul>
+
+</body>
+
+</html>

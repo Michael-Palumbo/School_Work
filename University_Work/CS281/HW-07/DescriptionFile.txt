@@ -1,0 +1,16 @@
+Name:		Michael Palumbo
+Class:		CS281-B
+Assignment: 	HW-07
+
+
+This is the answers to the hw7. Where we went of over the datapath, and what we are looking at and how we could change it.
+
+I wrote this on a windows os computer. Any pdf viewer will beable to view the program.
+
+No executable program, and no testing 
+
+These description files are just so weird for assignments like these.
+
+I think the assignment was nice, I just didn't like the beginning bit, 4.7 was weird. and I just didn't really understand what 4.1 was asking.
+
+The later half was pretty interesting though, and its cool to see how we can change and make improvements.

@@ -1,0 +1,8 @@
+A.G.C. Notes:
+	16-bit word length
+		15 data bits and 1 parity bit
+			is a bit added to a string of binary code to ensure that
+			the total number of 1-bits in the string is even or odd
+		Stored in a read-only momeroy
+
+Interests:

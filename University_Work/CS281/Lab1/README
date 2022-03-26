@@ -1,0 +1,22 @@
+Name:		Michael Palumbo
+Class:		CS281-B
+Assignment: 	lab1
+
+standard descrption file notes
+--------------------------
+This is the answers to Lab 1
+
+I used QtSpim. A program I had to download.
+
+I wrote this in a text file, on a windows computer
+
+This is just a text file, so anything that can read this, is fine.
+
+I learned quite a bit by doing this lab. It proved that I learned something, and what I know can actually make code. Tho I think this makes a few steps I didn't anticipate. Like moving a saved value into the values spot.
+
+I thought this assignment was neat. But I had a tough time starting since it took me awhile to realize what exactly I was copying down. And even now I still feel like I may have not did it right.
+
+For future reference from the assignment, there are a lot of instructions, but the one that matters, step 5, is all shoved into one long step. Seperating it out would have been nice.
+---------------------------
+
+For lab 1, I stepped through the entire program, and carefully noted what was being changed. It took me a bit to fully understand what was happening, and I still am not sure what the data tab is for in QtSpim. I also think I encountered a bug, with a command at [00400000] where it said that 3 registers had changed at the same time, which confused me immensely when I was going through it. There were also some commands I did not regnize like addiu, but I understand I can always look that up. besides that, everything went quite smoothly.

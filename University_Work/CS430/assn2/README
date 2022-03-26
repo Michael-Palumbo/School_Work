@@ -1,0 +1,19 @@
+Michael Palumbo
+
+
+
+CG_hw2 is capable of doing everything that was asked in the assignment instructions
+Given a list of instructions via a PS file, I construct a polygon
+I apply all the necessary trasformations, and then clip it to within the window.
+I then output is written to stdout, but can be redirected into a folder.
+
+The program is written in python3, but can be exectured using ./CG_hw2.
+I programmed this on a windows computer, and used python3 interpreter. 
+
+The "main()" method is located in CG_hw2
+
+Being nan interpreter language, compiling is just using python3, and even then its basically just ./  
+
+The makefile is a bit weird since you can't compile it, so it just basically runs it.. I don't recommend
+
+P.S Last assignment I coded this in C, and I thought I could do that again here, but after spending an entire day trying resolve a bug, I gave up and gave into Python... 

@@ -1,0 +1,23 @@
+Functions
+	parameter
+	returns
+	Test:
+		toLower()
+		enumerate()
+
+Modules and Scripts
+	Teach that
+	show _name__ == "__main__"
+
+Error Reading
+	Being able to read errors
+
+Classes
+	The concept
+	Visibilty
+	Create Box Class
+	Do Lab 2
+	Do Lab 3
+
+Files
+	Understanding the File Object

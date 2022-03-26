@@ -1,0 +1,3 @@
+I didn't know if you wanted me to always use example.input as std.in
+
+So incase if you wanted to, do `make run < example.input.txt` If you don't it'll just look at std.in

@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+
+#Michael Palumbo
+#
+#This program is designed to turn an ordinary array into a heap
+
+import sys, timeit
+
+def Left(i):
+	return 2 * i + 1
+
+def Right(i):
+	return 2 * i + 2
+
+def Parent(i):
+	return i//2
+
+def swap(A, i, ii):
+	temp = A[i]
+	A[i] = A[ii]
+	A[ii] = temp
+
+def get_node(A, i):
+	if i < len(A):
+		return A[i]
+	return None
+
+def down_heap(A, i):
+	largest = 0 #Just to satisfy that all assignment statements are in if statements
+
+	if get_node(A, Left(i)) == None and get_node(A, Right(i)) == None:
+		return
+
+	if get_node(A, Left(i)) == None:
+		largest = get_node(A, Right(i))
+	elif get_node(A, Right(i)) == None:
+		largest = get_node(A, Left(i))
+	else:
+		largest = (Right(i) if get_node(A, Right(i)) > get_node(A, Left(i)) else Left(i))
+
+	#print("%d %d %d %d"%(get_node(A, Left(i)), get_node(A, Right(i)), get_node(A, i), get_node(A, largest)))
+
+	if get_node(A, largest) > get_node(A, i):
+		swap(A, largest, i)
+		down_heap(A, largest)
+
+		
+def make_heap(A):
+	#Given a list, downheap from the buttom to the top
+	for item in reversed(range(len(A))):
+		down_heap(A, item)
+
+if __name__ == "__main__":
+	print("n\ttime\n____\t______________________")
+	for i in range(100, 1001, 100):
+		l = list(range(i))
+		rec_timer = timeit.Timer('make_heap(l)', 'from __main__ import make_heap, l')
+		print(str(i)+ "\t" + str(rec_timer.timeit(1)))
+		

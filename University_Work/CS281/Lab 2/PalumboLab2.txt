@@ -1,0 +1,102 @@
+Name:		Michael Palumbo
+Class:		CS281-B
+Assignment: 	lab1
+
+
+These are the answers to Lab2 I seperated everything like the 3 lines under this. With a lot of hyphens and then the title of the program (without .asm)
+----------------------------------
+Suma
+----------------------------------
+
+We push 2 words onto the stack, we then save $ra in one of the words in the stack (since we'll be using jal, we want to remember $ra) (though why we push 2 words, i don't know)
+
+We prep the parameters saving the address to the Array A to $a0, and n to $a1
+
+We then call Jal to jump to suma procedure
+
+suma: 
+we push a word on the stack pointer and save the current value of $s0 to it, we do this so we don't tamper with the value currently there, say if the caller was using $s0 for something
+
+We then set $t0 (which will be used for the incrementor i) and $s0 (which we'll store the sum of values) to 0
+
+We have now reached the LOOP
+
+Start by timing $t0 by 4 and saving it to $t1 (with each iteration we add i*4 save it to $t1. This is because in an array, an index or word is 4 bytes long.)
+
+we then save the pointer of the array+$t1 to $t2
+
+Then save the value of $t2 (which is a pointer to array[i] now) and save it to $t3. 
+
+Then add $t3 to the current value of $s0
+
+After that, we add 1 to $t0, since we are treating that as i
+
+then we ask if $t0(i) is less than n through the slt command, 
+then ask if the result of slt is NOT zero, meaning that if i<n continue the LOOP (aka going back up and following the instructions after "We have now reached the LOOP)
+
+(The second interation of the loop will have $t0 at 1, which makes $t1 at 4 since we times $t0 by 4, we then get the pointer with $t1's offset, and add to the current value of $s0)
+
+We loop over and over again, getting the index at eat i, and summing it up through the variable $s0
+On the last iteration, once i is equal or greater than n, $t3 will be zero, which means we don't goto Loop again.
+
+We move the $s0 value (which is currently the sum of the array) to $v0 which is treated as the return value. 
+
+we then restore $s0 to what we saved in the stack since we no longer need $s0. and then pop off a word from the stack pointer.
+
+We return to the main procedure, where we print out the value and eventually retreive $ra from the pointer stack, pop off 2 words from the pointer stack, and then return to caller.
+
+----------------------------------
+Sump
+----------------------------------
+Like wise to the last program, you start by pushing 2 words onto the stack, and then save ra to one of its spots.
+
+You prepare the parameters just like last time, before calling sump
+
+In sump, we plan on using $s0 so save whatever value is currently in it, so we don't tamper with it.
+
+We save the beginning of the array to a pointer $t0, and we save the size in words to $t1 (we times it by 4 because words are every 4 bytes)
+
+We then save a pointer to the end of the arrar in $t2. 
+
+We set $s0 and then we begin our loop
+
+We set $t3 to the value at $t0, remember right now $t0 is the a pointer, starting at the beginning of the loop
+
+We add $t3 to the current value at $s0, $s0 will be used to store the sum.
+
+we increment the $t0 by 4, aka 1 word. basically making point to the next value in the array.
+
+we then compare if $t0 is less than $t3, basically is incrementing pointer bigger than the pointer at the end of the array. If not, we continue the Loop.
+
+The gist of the loop is to increment a pointer starting at the beginning of the loop, till it reaches the pointer pointing to the end of the loop. (this is lowkey my favorite way of looping through array) As we increment we grab the value the pointer is pointing at and sum it in a value, in this case $s0
+
+Once the pointer ($t0) reaches the pointer at the end of the array ($t2) we stop jumping to the Loop label.
+
+We save the value in $s0 to $v0, indicating that's the return value, and restore $s0 to what was before we touched it via the stack pointer.
+We then pop a word off the stack pointer and return to the main procedure
+
+There we execute sys calls and grab varibles to print. Finally we pop the ra value of the stack pointer, and return to the procedure that called main.
+
+----------------------------------
+Sump
+----------------------------------
+Lastly sump, the beginning right before the loop is the same as the other 2 programs, so lets get to the loop.
+
+Unlike the last loops we do not start our procedure by pushing onto the stack pointer (we do that a bit later)
+
+1) We start setting $t0 to 1, just so we can use a constant (1) in a branching statement.
+2)We then ask if $a1 (n) is not equal to $t0 (1).  If it is one, we've reached our base case, we'll return A[0] (which would be A's last index) and our recursion would stop there.
+3)If $a1 is not 0, then main recursion branch in rec.
+
+4)in rec: we push 3 words onto the stack pointer. we save $ra, $a0 and $a1 on to the stack.
+
+5) We add 4 to the pointer of $a0 to allow us to go to it's next index. 
+6) We then minus -1 to n, to decrement it. (n is used as the interation, once its 1, the recurssion will it's base case).
+
+We then call jal sumr, and continue the process 1 through 6. Our second iteration (be it an array of size >2) would look exactly the same as the first iteration. We check for base case, then save the return address, the array pointer pointing to a value in the array and n
+
+So we loop saving each index n, array pointer, and return address until we get to where the index (n) is equal to 1.
+We save the value A[0] which should now be the last index in the array to the return value ($v0) then return to the jal sumr call. In that we pop the last 3 words off the stack. This would be the second to last index of the array and index 2 (and the return value to another jal sumr call) with the pointer we grab the value its pointing to and add it to the current return value ($v0). Now with our new return address we got from the stack we use jr on that. If the array was bigger than 2, it would bring us to another jal sumr call where we'll push 3 words off and add it to the return value again. This keeps happening until the return value is the main procedure.
+
+Once we return to the main procedure, we print our findings via syscalls and return back to the called.
+

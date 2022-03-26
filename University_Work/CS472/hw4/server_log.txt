@@ -1,0 +1,55 @@
+03-11-2021 17:13:10 Sending to [192.168.1.243:60363]: 220 Welcome to the Server
+03-11-2021 17:13:12 Recieving from [192.168.1.243:60363]: USER cs472
+03-11-2021 17:13:12 Sending to [192.168.1.243:60363]: 331 Please specify the password.
+03-11-2021 17:13:14 Recieving from [192.168.1.243:60363]: PASS hw3
+03-11-2021 17:13:14 Sending to [192.168.1.243:60363]: 230 Login Successful
+03-11-2021 17:13:19 Recieving from [192.168.1.243:60363]: PORT 192,168,1,243,235,204
+03-11-2021 17:13:19 Sending to [192.168.1.243:60363]: 200 Port okay.
+03-11-2021 17:13:19 Recieving from [192.168.1.243:60363]: LIST
+03-11-2021 17:13:19 Sending to [192.168.1.243:60363]: 150 File status okay; about to open data connection.
+03-11-2021 17:13:19 Sending to [192.168.1.243:60363]: 226 Closing data connection.
+03-11-2021 17:13:28 Recieving from [192.168.1.243:60363]: CWD folder
+03-11-2021 17:13:28 Sending to [192.168.1.243:60363]: 250 Requested file action completed
+03-11-2021 17:13:30 Recieving from [192.168.1.243:60363]: PORT 192,168,1,243,235,206
+03-11-2021 17:13:30 Sending to [192.168.1.243:60363]: 200 Port okay.
+03-11-2021 17:13:30 Recieving from [192.168.1.243:60363]: LIST
+03-11-2021 17:13:30 Sending to [192.168.1.243:60363]: 150 File status okay; about to open data connection.
+03-11-2021 17:13:30 Sending to [192.168.1.243:60363]: 226 Closing data connection.
+03-11-2021 17:15:12 Recieving from [192.168.1.243:60363]: CDUP
+03-11-2021 17:15:12 Sending to [192.168.1.243:60363]: 250 Requesting file action okay, completed.
+03-11-2021 17:15:27 Recieving from [192.168.1.243:60363]: EPRT |1|192.168.1.243|60381|
+03-11-2021 17:15:27 Sending to [192.168.1.243:60363]: 200 Port okay.
+03-11-2021 17:15:27 Recieving from [192.168.1.243:60363]: LIST
+03-11-2021 17:15:27 Sending to [192.168.1.243:60363]: 150 File status okay; about to open data connection.
+03-11-2021 17:15:27 Sending to [192.168.1.243:60363]: 226 Closing data connection.
+03-11-2021 17:15:54 Recieving from [192.168.1.243:60363]: EPRT |1|192.168.1.243|60386|
+03-11-2021 17:15:54 Sending to [192.168.1.243:60363]: 200 Port okay.
+03-11-2021 17:15:54 Recieving from [192.168.1.243:60363]: RETR log
+03-11-2021 17:15:54 Sending to [192.168.1.243:60363]: 150 File status okay; about to open data connection
+03-11-2021 17:15:54 Sending to [192.168.1.243:60363]: 226 Closing data connection.
+03-11-2021 17:16:15 Recieving from [192.168.1.243:60363]: EPRT |1|192.168.1.243|60388|
+03-11-2021 17:16:15 Sending to [192.168.1.243:60363]: 200 Port okay.
+03-11-2021 17:16:15 Recieving from [192.168.1.243:60363]: STOR log
+03-11-2021 17:16:15 Sending to [192.168.1.243:60363]: 150 File status okay, openning data connection
+03-11-2021 17:16:15 Sending to [192.168.1.243:60363]: 226 Closing data connection.
+03-11-2021 17:16:39 Recieving from [192.168.1.243:60363]: PWD
+03-11-2021 17:16:39 Sending to [192.168.1.243:60363]: 257 /Users/michaelpalumbo/Library/Mobile Documents/com~apple~CloudDocs/workspace/mp3492-hw3
+03-11-2021 17:16:59 Sending to [192.168.1.243:60395]: 220 Welcome to the Server
+03-11-2021 17:17:02 Recieving from [192.168.1.243:60395]: USER akjdf
+03-11-2021 17:17:02 Sending to [192.168.1.243:60395]: 331 Please specify the password.
+03-11-2021 17:17:03 Recieving from [192.168.1.243:60395]: PASS dfasf
+03-11-2021 17:17:03 Sending to [192.168.1.243:60395]: 530 Incorrect Credentials
+03-11-2021 17:17:05 Recieving from [192.168.1.243:60395]: EPRT |1|192.168.1.243|60396|
+03-11-2021 17:17:05 Sending to [192.168.1.243:60395]: 530 Login incorrect
+03-11-2021 17:17:05 Recieving from [192.168.1.243:60395]: PORT 192,168,1,243,235,236
+03-11-2021 17:17:05 Sending to [192.168.1.243:60395]: 530 Login incorrect
+03-11-2021 17:17:05 Recieving from [192.168.1.243:60395]: LPRT 4,4,192,168,1,243,2,235,236
+03-11-2021 17:17:05 Sending to [192.168.1.243:60395]: 400 "['LPRT', '4,4,192,168,1,243,2,235,236']" was an invalid command
+03-11-2021 17:17:16 Recieving from [192.168.1.243:60395]: USER cs472
+03-11-2021 17:17:16 Sending to [192.168.1.243:60395]: 331 Please specify the password.
+03-11-2021 17:17:17 Recieving from [192.168.1.243:60395]: PASS hw3
+03-11-2021 17:17:17 Sending to [192.168.1.243:60395]: 230 Login Successful
+03-11-2021 17:17:21 Recieving from [192.168.1.243:60395]: QUIT
+03-11-2021 17:17:21 Sending to [192.168.1.243:60395]: 221 Goodbye.
+03-11-2021 17:17:24 Recieving from [192.168.1.243:60363]: QUIT
+03-11-2021 17:17:24 Sending to [192.168.1.243:60363]: 221 Goodbye.

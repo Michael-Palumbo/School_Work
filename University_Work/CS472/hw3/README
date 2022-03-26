@@ -1,0 +1,22 @@
+# Michael Palumbo
+
+
+
+## Questions:
+
+1. Do you think that someone could hack into your FTP server? Why or why not? Through
+what methods?
+Most definitely someone can hack it. Someone on the same internet as you could easily sniff out your packets through an application like wireshark to discover what your username and password are, since they aren't encrypted at all when sent to the server. 
+
+
+2. Critique how FTP solves the problem of file transfer – what is good?
+What is bad? What is weird?
+
+Good: File transfer is extremely efficient on FTP servers, when i was younger, someone taught me how to transfer files through an FTP server, becuase going through the hosting provider took ages. It is also relatevely easy to set up, since you don't have to encrypt or take additional steps, but the lack of encryption does take me to the bad.
+Bad: It is not very secure. Even the password, is sent out opennly through wireshark. Anyone one that picks you as a target, could sniff out your packets and discover what your credientials are and what you are sending over the internet.
+Weird: While you can say the lack of encryption is weird, I find the second socket just as weird. An entirely new connection with its own port, just to send data, that might not take longer than a second.
+
+3. How hard would it be to make FTP use one channel (both command and
+data over the same socket) instead of two?
+
+I believe while it wouldn't be terribly hard, (infact when i was coding hw2, didn't even realize I needed a second socket to begin with). I think the issue would arrive with the number delimters. The 3 character numbers helps the client and server to know what the other is asking. If we send a heap of data, how will we know that a series of 3 character is that heap of data doesn't tell the server that it needs to stop reading. It overall adds to a mess of confusion on both sides. With a data socket, both sides can rest assured that they don't need to parse any data in that heap looking for commands. 

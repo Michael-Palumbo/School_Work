@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+#define MaxLength = 1000;
+
+int main(void){
+
+	int lengths[1000];
+	int count = 0;
+	char c;
+	
+	while( (c = getchar()) != EOF){
+		if(c != ' ')
+			count++;
+		else{
+			if(count >= MaxLength) 
+				count = 0 ;
+			lengths[count]++;
+			count = 0;
+		}
+
+	for( int i = 0 ; i < 1000 ; i++){
+		if(lengths[i] != 0)
+			printf("Legth of %3d appeared %4d time(s)", i, lengths[i]);
+	}
+	printf(

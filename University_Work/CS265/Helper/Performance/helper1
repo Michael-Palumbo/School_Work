@@ -1,0 +1,20 @@
+echo 10,000
+time ./sort1 < ins.10000 > /dev/null
+echo 20,000
+time ./sort1 < ins.20000 > /dev/null
+echo 30,000
+time ./sort1 < ins.30000 > /dev/null
+echo 40,000
+time ./sort1 < ins.40000 > /dev/null
+echo 50,000
+time ./sort1 < ins.50000 > /dev/null
+echo 60,000
+time ./sort1 < ins.60000 > /dev/null
+echo 70,000
+time ./sort1 < ins.70000 > /dev/null
+echo 80,000
+time ./sort1 < ins.80000 > /dev/null
+echo 90,000
+time ./sort1 < ins.90000 > /dev/null
+echo 100,000
+time ./sort1 < ins.100000 > /dev/null

@@ -1,0 +1,14 @@
+Michael Palumbo
+
+CG_hw3 is capable of doing everything with slight errors. That after a few hours i gave up trying to solve.
+
+My main error is clipping, for the life of me, I cannot fix it perfectly. It seems that whenever the first point is out of boundaries, it breaks on itself.
+
+The program is written in python3, but can be exectured using ./CG_hw3.
+I programmed this on a windows computer, and used python3 interpreter. 
+
+The "main()" method is located in CG_hw3
+
+Being an interpreter language, compiling is just using python3, and even then its basically just ./  
+
+The makefile is a bit weird since you can't compile it, so it just basically runs it.. I don't recommend

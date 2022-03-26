@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>User Registration</title>
+      <link href="style.css" rel="stylesheet">
+      <script src="register.js" defer></script>
+   </head>
+
+   <body>
+   
+   	<form method="POST">
+   		<div>
+   		<label for="Fname">Full Name</label>
+   		<input id="fullName" type="text" name="Fname">
+   		</div>
+   		<div>
+   		<label for="mail">Email</label>
+   		<input id="email" type="email" name="mail">
+   		</div>
+   		<div>
+   		<label for="pass">Password</label>
+   		<input id="password" type="password" name="pass">
+   		</div>
+   		<div>
+   		<label for="Cpass">Confirm Password</label>
+   		<input id="passwordConfirm" type="password" name="Cpass">
+   		</div>
+   		<div id="formErrors" display="none"></div>
+   		<input id="submit" type="submit" value="Register">
+   	</form>
+
+
+
+   </body>
+</html>
